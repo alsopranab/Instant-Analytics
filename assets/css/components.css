@@ -222,3 +222,77 @@
     transform: translateY(0);
   }
 }
+/* =========================================
+   Toggle Sections
+========================================= */
+
+.toggle-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #f8fafc, #eef2f7);
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.toggle-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggle-header .chevron {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-header.collapsed .chevron {
+  transform: rotate(-90deg);
+}
+
+.toggle-content {
+  max-height: 1000px;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease;
+}
+
+/* =========================================
+   Dashboard Layout
+========================================= */
+
+.dashboard {
+  position: sticky;
+  top: 16px;
+  z-index: 5;
+  overflow-x: auto;
+}
+
+/* =========================================
+   Scroll Polish
+========================================= */
+
+#dataPreview,
+#dashboard {
+  scrollbar-width: thin;
+}
+
+#dataPreview::-webkit-scrollbar,
+#dashboard::-webkit-scrollbar {
+  height: 6px;
+}
+
+#dataPreview::-webkit-scrollbar-thumb,
+#dashboard::-webkit-scrollbar-thumb {
+  background-color: #c7d2fe;
+  border-radius: 6px;
+}
