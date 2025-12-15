@@ -1,5 +1,5 @@
 /* =========================================
-   Suggested Queries Generator
+   Suggested Queries Generator (FINAL – FIXED)
 ========================================= */
 
 /**
@@ -13,12 +13,14 @@ function getContainer() {
  * Build suggested queries from schema
  */
 function buildSuggestions(schema) {
-  if (!schema) return [];
+  if (!schema || typeof schema !== "object") return [];
 
   const numeric = [];
   const categorical = [];
 
   for (const [field, meta] of Object.entries(schema)) {
+    if (!meta || !meta.type) continue;
+
     if (meta.type === "number") numeric.push(field);
     if (meta.type === "string") categorical.push(field);
   }
@@ -46,16 +48,18 @@ function renderSuggestions(items) {
   const container = getContainer();
   if (!container) return;
 
+  /* 🔥 MUST clear previous buttons */
   container.innerHTML = "";
-  if (!items.length) return;
+  if (!Array.isArray(items) || !items.length) return;
 
-  const title = document.createElement("h3");
-  title.textContent = "Suggested Questions";
-  container.appendChild(title);
+  /* Wrapper ensures proper layout */
+  const wrapper = document.createElement("div");
+  wrapper.className = "suggestions-wrapper";
 
   items.forEach((text) => {
     const btn = document.createElement("button");
     btn.className = "suggestion-btn";
+    btn.type = "button";
     btn.textContent = text;
 
     btn.addEventListener("click", () => {
@@ -64,7 +68,6 @@ function renderSuggestions(items) {
 
       input.value = text;
 
-      // 🔥 Trigger the same path as pressing Enter
       input.dispatchEvent(
         new KeyboardEvent("keydown", {
           key: "Enter",
@@ -73,8 +76,10 @@ function renderSuggestions(items) {
       );
     });
 
-    container.appendChild(btn);
+    wrapper.appendChild(btn);
   });
+
+  container.appendChild(wrapper);
 }
 
 /**
