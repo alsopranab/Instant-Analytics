@@ -1,5 +1,5 @@
 /* =========================================
-   Dashboard UI Updates
+   Dashboard UI Updates (FINAL)
    ========================================= */
 
 /**
@@ -10,8 +10,21 @@
  */
 export function updateDashboard({ explanation, suggestion }) {
   const dashboard = document.getElementById("dashboard");
-
   if (!dashboard) return;
+
+  /* ---------------------------------------
+     Ensure text container exists
+     --------------------------------------- */
+  let textContainer = dashboard.querySelector(".dashboard-text");
+
+  if (!textContainer) {
+    textContainer = document.createElement("div");
+    textContainer.className = "dashboard-text";
+    dashboard.appendChild(textContainer);
+  }
+
+  /* Clear previous text only */
+  textContainer.innerHTML = "";
 
   /* ---------------------------------------
      Explanation
@@ -20,8 +33,7 @@ export function updateDashboard({ explanation, suggestion }) {
     const explanationEl = document.createElement("div");
     explanationEl.className = "explanation fade-in";
     explanationEl.textContent = explanation;
-
-    dashboard.appendChild(explanationEl);
+    textContainer.appendChild(explanationEl);
   }
 
   /* ---------------------------------------
@@ -37,6 +49,6 @@ export function updateDashboard({ explanation, suggestion }) {
       suggestionWrapper.appendChild(p);
     });
 
-    dashboard.appendChild(suggestionWrapper);
+    textContainer.appendChild(suggestionWrapper);
   }
 }
