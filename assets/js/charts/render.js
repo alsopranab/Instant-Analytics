@@ -1,6 +1,6 @@
 /* =========================================
    Chart Rendering Engine (FINAL)
-   ========================================= */
+========================================= */
 
 /**
  * Get dashboard element safely
@@ -17,9 +17,7 @@ function clearChart() {
   if (!dashboard) return;
 
   const existingChart = dashboard.querySelector(".chart-container");
-  if (existingChart) {
-    existingChart.remove();
-  }
+  if (existingChart) existingChart.remove();
 }
 
 /**
@@ -32,6 +30,26 @@ function createChartContainer() {
 }
 
 /**
+ * Create chart title
+ */
+function createTitle(text) {
+  const h3 = document.createElement("h3");
+  h3.className = "chart-title";
+  h3.textContent = text;
+  return h3;
+}
+
+/**
+ * Create axis labels row
+ */
+function createAxisInfo(xLabel, yLabel) {
+  const info = document.createElement("div");
+  info.className = "chart-axis-info";
+  info.textContent = `${yLabel} by ${xLabel}`;
+  return info;
+}
+
+/**
  * Render Bar Chart (SVG)
  */
 function renderBarChart(container, data) {
@@ -40,13 +58,12 @@ function renderBarChart(container, data) {
   const padding = 40;
 
   const maxValue = Math.max(...data.map(d => d.value), 0) || 1;
+  const barWidth = (width - padding * 2) / data.length;
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("class", "chart-svg");
   svg.setAttribute("width", width);
   svg.setAttribute("height", height);
-
-  const barWidth = (width - padding * 2) / data.length;
 
   data.forEach((d, i) => {
     const barHeight = (d.value / maxValue) * (height - padding * 2);
@@ -54,9 +71,10 @@ function renderBarChart(container, data) {
     const rect = document.createElementNS(svg.namespaceURI, "rect");
     rect.setAttribute("x", padding + i * barWidth);
     rect.setAttribute("y", height - padding - barHeight);
-    rect.setAttribute("width", barWidth * 0.8);
+    rect.setAttribute("width", barWidth * 0.7);
     rect.setAttribute("height", barHeight);
     rect.setAttribute("class", "chart-bar");
+    rect.setAttribute("title", `${d.label}: ${d.value}`);
 
     svg.appendChild(rect);
   });
@@ -102,18 +120,14 @@ function renderLineChart(container, data) {
  */
 function renderTable(container, data) {
   const table = document.createElement("table");
-  table.style.width = "100%";
-  table.style.borderCollapse = "collapse";
+  table.className = "chart-table";
 
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
 
-  ["Label", "Value"].forEach(text => {
+  ["Category", "Value"].forEach(text => {
     const th = document.createElement("th");
     th.textContent = text;
-    th.style.textAlign = "left";
-    th.style.padding = "8px";
-    th.style.borderBottom = "1px solid #e5e7eb";
     headerRow.appendChild(th);
   });
 
@@ -127,11 +141,9 @@ function renderTable(container, data) {
 
     const tdLabel = document.createElement("td");
     tdLabel.textContent = row.label;
-    tdLabel.style.padding = "8px";
 
     const tdValue = document.createElement("td");
     tdValue.textContent = row.value;
-    tdValue.style.padding = "8px";
 
     tr.appendChild(tdLabel);
     tr.appendChild(tdValue);
@@ -145,7 +157,13 @@ function renderTable(container, data) {
 /**
  * Public render function
  */
-export function renderChart({ chartType, data }) {
+export function renderChart({
+  chartType,
+  data,
+  title = "Result",
+  xLabel = "Category",
+  yLabel = "Value"
+}) {
   const dashboard = getDashboard();
   if (!dashboard) return;
 
@@ -154,6 +172,10 @@ export function renderChart({ chartType, data }) {
   if (!Array.isArray(data) || data.length === 0) return;
 
   const container = createChartContainer();
+
+  // Context (THIS fixes your main complaint)
+  container.appendChild(createTitle(title));
+  container.appendChild(createAxisInfo(xLabel, yLabel));
 
   if (chartType === "line") {
     renderLineChart(container, data);
