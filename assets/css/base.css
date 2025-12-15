@@ -1,35 +1,48 @@
 /* =========================================
-   Base Styles and Layout (Advanced + Dark Mode)
+   Base Styles & Layout
+   (Advanced + Dark Mode)
 ========================================= */
 
 /* -----------------------------------------
-   Theme Tokens
+   Theme Variables (Light)
 ----------------------------------------- */
 :root {
-  --bg-main: linear-gradient(180deg, #f5f7fa 0%, #eef2f7 100%);
-  --bg-card: #ffffff;
-  --bg-hover: #f8fafc;
+  --bg-main: linear-gradient(
+    180deg,
+    var(--color-gray-50) 0%,
+    var(--color-gray-100) 100%
+  );
 
-  --text-main: #111827;
-  --text-muted: #6b7280;
-  --text-soft: #4b5563;
+  --bg-card: var(--color-white);
+  --bg-hover: var(--color-gray-50);
 
-  --border-subtle: #e5e7eb;
+  --text-main: var(--color-gray-900);
+  --text-muted: var(--color-gray-500);
+  --text-soft: var(--color-gray-600);
 
-  --accent: #4f46e5;
+  --border-subtle: var(--color-gray-200);
+
+  --accent: var(--color-primary);
 }
 
-/* 🌙 Dark Mode */
+/* -----------------------------------------
+   Theme Variables (Dark)
+----------------------------------------- */
 [data-theme="dark"] {
-  --bg-main: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-  --bg-card: #020617;
-  --bg-hover: #020617;
+  --bg-main: linear-gradient(
+    180deg,
+    var(--color-gray-900) 0%,
+    var(--color-black) 100%
+  );
 
-  --text-main: #e5e7eb;
-  --text-muted: #94a3b8;
-  --text-soft: #cbd5f5;
+  --bg-card: var(--color-gray-900);
+  --bg-hover: var(--color-gray-800);
 
-  --border-subtle: #1e293b;
+  --text-main: var(--color-gray-100);
+  --text-muted: var(--color-gray-400);
+  --text-soft: var(--color-gray-300);
+
+  --border-subtle: var(--color-gray-800);
 
   --accent: #818cf8;
 }
@@ -51,7 +64,7 @@ body {
 }
 
 /* -----------------------------------------
-   Body & Background
+   Body
 ----------------------------------------- */
 body {
   font-family: var(--font-sans);
@@ -60,7 +73,9 @@ body {
   color: var(--text-main);
   background: var(--bg-main);
   -webkit-font-smoothing: antialiased;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
 /* -----------------------------------------
@@ -79,8 +94,8 @@ h6 {
 }
 
 h3 {
-  font-size: 15px;
-  margin-bottom: 8px;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-2);
 }
 
 p {
@@ -112,7 +127,7 @@ label {
 .app-header {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .app-title {
@@ -133,26 +148,28 @@ label {
   align-items: flex-end;
   gap: var(--space-6);
   flex-wrap: wrap;
-  padding-bottom: 8px;
+  padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--border-subtle);
 }
 
 /* -----------------------------------------
-   Data Awareness Cards
+   Primary Content Cards
 ----------------------------------------- */
+.dashboard,
 #dataOverview,
 #dataKpis,
 #dataPreview,
-#suggestedQueries,
-.dashboard {
+#suggestedQueries {
   background-color: var(--bg-card);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.04),
     0 2px 6px rgba(0, 0, 0, 0.03);
   animation: fadeUp 0.35s ease-out;
-  transition: background-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 #dataOverview,
@@ -171,7 +188,7 @@ label {
 }
 
 /* -----------------------------------------
-   Tables
+   Tables (Global Defaults)
 ----------------------------------------- */
 table {
   width: 100%;
@@ -179,11 +196,11 @@ table {
 }
 
 th {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 td {
@@ -193,7 +210,7 @@ td {
 
 th,
 td {
-  padding: 6px 8px;
+  padding: var(--space-2) var(--space-2);
   border-bottom: 1px solid var(--border-subtle);
 }
 
