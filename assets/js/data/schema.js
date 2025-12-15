@@ -1,21 +1,24 @@
 /* =========================================
-   Schema Inference
+   Schema Inference (FINAL)
    ========================================= */
 
 /**
- * Infer the data type of a value
+ * Safely infer primitive type of a value
  */
 function inferType(value) {
-  if (value === null || value === undefined || value === "") {
-    return "empty";
-  }
+  if (value === null || value === undefined) return "empty";
 
-  if (!isNaN(value) && value.trim() !== "") {
+  const text = String(value).trim();
+  if (text === "") return "empty";
+
+  /* Strict number check */
+  if (!isNaN(text) && text !== "") {
     return "number";
   }
 
-  const date = Date.parse(value);
-  if (!isNaN(date)) {
+  /* Strict date check (ISO / common formats only) */
+  const timestamp = Date.parse(text);
+  if (!isNaN(timestamp) && /[-/]/.test(text)) {
     return "date";
   }
 
@@ -23,7 +26,7 @@ function inferType(value) {
 }
 
 /**
- * Resolve the dominant type from a list
+ * Resolve dominant column type
  */
 function resolveType(types) {
   if (types.includes("string")) return "string";
@@ -36,7 +39,7 @@ function resolveType(types) {
  * Infer schema from dataset
  */
 export function inferSchema(rows) {
-  if (!rows || rows.length === 0) return {};
+  if (!Array.isArray(rows) || rows.length === 0) return {};
 
   const schema = {};
   const columns = Object.keys(rows[0]);
@@ -48,9 +51,12 @@ export function inferSchema(rows) {
       detectedTypes.add(inferType(row[column]));
     });
 
+    const type = resolveType([...detectedTypes]);
+
     schema[column] = {
       name: column,
-      type: resolveType([...detectedTypes])
+      type,
+      role: type === "number" ? "metric" : "dimension"
     };
   });
 
