@@ -1,24 +1,21 @@
 /* =========================================
-   Debounce Utility (FINAL)
-   ========================================= */
+   Debounce Utility (Deno + Browser Safe)
+========================================= */
 
 /**
- * Debounce a function
- * @param {Function} fn - function to debounce
- * @param {number} delay - delay in milliseconds
- * @returns {Function}
+ * Debounce a function call
+ * @param {Function} fn
+ * @param {number} delay
  */
 export function debounce(fn, delay = 300) {
-  if (typeof fn !== "function") {
-    throw new TypeError("debounce expects a function");
-  }
-
   let timerId = null;
 
   return function (...args) {
     const context = this;
 
-    clearTimeout(timerId);
+    if (timerId) {
+      clearTimeout(timerId);
+    }
 
     timerId = setTimeout(() => {
       fn.apply(context, args);
