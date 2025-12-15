@@ -1,10 +1,10 @@
 /* =========================================
-   Query Input Handling (FINAL)
-   ========================================= */
+   Query Input Handling (FINAL – FIXED)
+========================================= */
 
 /**
  * Initialize query input
- * @param {Function} onQueryExecute - callback to run analytics pipeline
+ * @param {Function} onQueryExecute
  */
 export function initQuery(onQueryExecute) {
   if (typeof onQueryExecute !== "function") {
@@ -14,13 +14,20 @@ export function initQuery(onQueryExecute) {
   const queryInput = document.getElementById("queryInput");
   if (!queryInput) return;
 
-  queryInput.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter") return;
-    if (event.repeat) return;
-
+  const execute = () => {
     const query = queryInput.value.trim();
     if (!query) return;
-
     onQueryExecute(query);
+  };
+
+  queryInput.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();        // 🔥 REQUIRED
+    if (event.repeat) return;
+
+    execute();
   });
+
+  /* 🔥 Expose programmatic execution safely */
+  queryInput.executeQuery = execute;
 }
