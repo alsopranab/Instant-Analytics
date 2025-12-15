@@ -16,13 +16,13 @@ import { updateDashboard } from "./ui/dashboard.js";
 
 /* ---------- Intelligence ---------- */
 import { parseQuery } from "./intelligence/intent.js";
-import { suggestChart } from "./intelligence/suggest.js";
-import { explainResult } from "./intelligence/explain.js";
+import { suggestChart as _suggestChart } from "./intelligence/suggest.js";
+import { explainResult as _explainResult } from "./intelligence/explain.js";
 
 /* ---------- Charts ---------- */
-import { decideChart } from "./charts/decide.js";
-import { transformData } from "./charts/transform.js";
-import { renderChart } from "./charts/render.js";
+import { decideChart as _decideChart } from "./charts/decide.js";
+import { transformData as _transformData } from "./charts/transform.js";
+import { renderChart as _renderChart } from "./charts/render.js";
 
 /* -----------------------------------------
    Global App State
@@ -43,7 +43,7 @@ function $(id) {
 /* -----------------------------------------
    Data Load Handler
 ----------------------------------------- */
-async function handleDataLoad({ file = null, sheetUrl = null }) {
+async function _handleDataLoad({ file = null, sheetUrl = null }) {
   try {
     const result = await loadData({ file, sheetUrl });
     if (!result || !result.tables) {
@@ -71,7 +71,6 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
       if (empty) empty.style.display = "none";
     });
 
-    // Default table
     state.activeTable = tableNames[0];
     setActiveTab(state.activeTable);
 
@@ -89,10 +88,80 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
 }
 
 /* -----------------------------------------
-   Query Execution (CORE)
+   Query Execution
 ----------------------------------------- */
-function executeQuery(queryText) {
+function _executeQuery(queryText) {
   if (!queryText || !state.activeTable) return;
 
-  const data = state.tables[state.activeTable];
-  const schema = state.s
+  const _data = state.tables[state.activeTable];
+  const _schema = state.schema[state.activeTable];
+  if (!_data || !_schema) return;
+
+  const intent = parseQuery(queryText, _schema);
+  const chartType = _decideChart(intent);
+  const transformed = _transformData(_data, intent);
+
+  if (!Array.isArray(transformed) || transformed.length === 0) {
+    updateDashboard({
+      explanation: "No data available for this query.",
+      suggestion: _suggestChart(intent)
+    });
+    return;
+  }
+
+  _renderChart({
+    chartType,
+    data: transformed,
+    title: "Result",
+    xLabel: intent.dimension,
+    yLabel: intent.aggregation.toUpperCase()
+  });
+
+  updateDashboard({
+    explanation: _explainResult(intent, chartType),
+    suggestion: _suggestChart(intent)
+  });
+}
+
+/* -----------------------------------------
+   Initialization
+----------------------------------------- */
+const _init = () => {
+  initInput();
+  initQuery(_executeQuery);
+
+  const csvInput = $("csvInput");
+  const sheetInput = $("sheetInput");
+
+  if (csvInput) {
+    csvInput.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (file) _handleDataLoad({ file });
+    });
+  }
+
+  if (sheetInput) {
+    const loadSheet = () => {
+      const url = sheetInput.value.trim();
+      if (url) _handleDataLoad({ sheetUrl: url });
+    };
+
+    sheetInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        loadSheet();
+      }
+    });
+
+    sheetInput.addEventListener("paste", () => {
+      setTimeout(loadSheet, 0);
+    });
+
+    sheetInput.addEventListener("blur", loadSheet);
+  }
+};
+
+/* -----------------------------------------
+   Boot
+----------------------------------------- */
+document.addEventListener("DOMContentLoaded", _init);
