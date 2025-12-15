@@ -1,63 +1,72 @@
 /* =========================================
-   App Bootstrap & Orchestration
+   App Bootstrap & Orchestration (FINAL)
    ========================================= */
 
-import { loadCSV } from "./data/load.js";
+import { loadData } from "./data/load.js";
 import { createTabs, setActiveTab } from "./data/tabs.js";
+
 import { parseQuery } from "./intelligence/intent.js";
 import { suggestChart } from "./intelligence/suggest.js";
 import { explainResult } from "./intelligence/explain.js";
+
 import { decideChart } from "./charts/decide.js";
 import { transformData } from "./charts/transform.js";
 import { renderChart } from "./charts/render.js";
+
 import { initInput } from "./ui/input.js";
 import { initQuery } from "./ui/query.js";
 import { updateDashboard } from "./ui/dashboard.js";
 
 /* -----------------------------------------
    Global App State
-   ----------------------------------------- */
+----------------------------------------- */
 const state = {
   rawData: [],
   tables: {},
-  activeTable: null,
   schema: {},
+  activeTable: null,
   lastQuery: null
 };
 
 /* -----------------------------------------
-   DOM References
-   ----------------------------------------- */
-const csvInput = document.getElementById("csvInput");
-const emptyState = document.getElementById("emptyState");
+   DOM Helpers
+----------------------------------------- */
+function $(id) {
+  return document.getElementById(id);
+}
 
 /* -----------------------------------------
-   CSV Upload Handler
-   ----------------------------------------- */
-csvInput.addEventListener("change", async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+   Data Load Handler
+----------------------------------------- */
+async function handleDataLoad({ file = null, sheetUrl = null }) {
+  try {
+    const result = await loadData({ file, sheetUrl });
 
-  const result = await loadCSV(file);
+    state.rawData = result.rawData;
+    state.tables = result.tables;
+    state.schema = result.schema;
 
-  state.rawData = result.rawData;
-  state.tables = result.tables;
-  state.schema = result.schema;
+    const tableNames = Object.keys(result.tables);
+    if (!tableNames.length) return;
 
-  createTabs(result.tables, (tableName) => {
-    state.activeTable = tableName;
-    setActiveTab(tableName);
-    emptyState.style.display = "none";
-  });
+    createTabs(result.tables, (tableName) => {
+      state.activeTable = tableName;
+      setActiveTab(tableName);
+      $("emptyState").style.display = "none";
+    });
 
-  state.activeTable = Object.keys(result.tables)[0];
-  setActiveTab(state.activeTable);
-  emptyState.style.display = "none";
-});
+    state.activeTable = tableNames[0];
+    setActiveTab(state.activeTable);
+    $("emptyState").style.display = "none";
+  } catch (error) {
+    console.error(error);
+    alert(error.message || "Failed to load data");
+  }
+}
 
 /* -----------------------------------------
    Query Execution Pipeline
-   ----------------------------------------- */
+----------------------------------------- */
 function executeQuery(queryText) {
   if (!state.activeTable) return;
 
@@ -71,10 +80,8 @@ function executeQuery(queryText) {
   const explanation = explainResult(intent, chartType);
 
   renderChart({
-    containerId: "dashboard",
     chartType,
-    data: transformed,
-    intent
+    data: transformed
   });
 
   updateDashboard({
@@ -87,10 +94,28 @@ function executeQuery(queryText) {
 
 /* -----------------------------------------
    Initialization
-   ----------------------------------------- */
+----------------------------------------- */
 function init() {
+  const csvInput = $("csvInput");
+  const sheetInput = $("sheetInput");
+
   initInput();
   initQuery(executeQuery);
+
+  if (csvInput) {
+    csvInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) handleDataLoad({ file });
+    });
+  }
+
+  if (sheetInput) {
+    sheetInput.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      const url = sheetInput.value.trim();
+      if (url) handleDataLoad({ sheetUrl: url });
+    });
+  }
 }
 
 init();
