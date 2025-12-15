@@ -1,7 +1,8 @@
 /* =========================================
    App Bootstrap & Orchestration (FINAL)
-   ========================================= */
+========================================= */
 
+/* ---------- Imports (ES Modules) ---------- */
 import { loadData } from "./data/load.js";
 import { createTabs, setActiveTab } from "./data/tabs.js";
 
@@ -29,7 +30,7 @@ const state = {
 };
 
 /* -----------------------------------------
-   DOM Helpers
+   DOM Helper (Safe)
 ----------------------------------------- */
 function $(id) {
   return document.getElementById(id);
@@ -42,24 +43,34 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
   try {
     const result = await loadData({ file, sheetUrl });
 
-    state.rawData = result.rawData;
+    if (!result || !result.tables) {
+      throw new Error("Invalid data format returned");
+    }
+
+    state.rawData = result.rawData || [];
     state.tables = result.tables;
-    state.schema = result.schema;
+    state.schema = result.schema || {};
 
-    const tableNames = Object.keys(result.tables);
-    if (!tableNames.length) return;
+    const tableNames = Object.keys(state.tables);
+    if (!tableNames.length) {
+      throw new Error("No tables detected in data");
+    }
 
-    createTabs(result.tables, (tableName) => {
+    createTabs(state.tables, (tableName) => {
       state.activeTable = tableName;
       setActiveTab(tableName);
-      $("emptyState").style.display = "none";
+      const empty = $("emptyState");
+      if (empty) empty.style.display = "none";
     });
 
     state.activeTable = tableNames[0];
     setActiveTab(state.activeTable);
-    $("emptyState").style.display = "none";
+
+    const empty = $("emptyState");
+    if (empty) empty.style.display = "none";
+
   } catch (error) {
-    console.error(error);
+    console.error("Data Load Error:", error);
     alert(error.message || "Failed to load data");
   }
 }
@@ -68,10 +79,15 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
    Query Execution Pipeline
 ----------------------------------------- */
 function executeQuery(queryText) {
-  if (!state.activeTable) return;
+  if (!queryText || !state.activeTable) return;
 
   const data = state.tables[state.activeTable];
   const schema = state.schema[state.activeTable];
+
+  if (!data || !schema) {
+    console.warn("No active data/schema");
+    return;
+  }
 
   const intent = parseQuery(queryText, schema);
   const chartType = decideChart(intent);
@@ -93,7 +109,7 @@ function executeQuery(queryText) {
 }
 
 /* -----------------------------------------
-   Initialization
+   Initialization (DOM-Safe)
 ----------------------------------------- */
 function init() {
   const csvInput = $("csvInput");
@@ -104,7 +120,7 @@ function init() {
 
   if (csvInput) {
     csvInput.addEventListener("change", (event) => {
-      const file = event.target.files[0];
+      const file = event.target.files?.[0];
       if (file) handleDataLoad({ file });
     });
   }
@@ -118,4 +134,7 @@ function init() {
   }
 }
 
-init();
+/* -----------------------------------------
+   Boot
+----------------------------------------- */
+document.addEventListener("DOMContentLoaded", init);
