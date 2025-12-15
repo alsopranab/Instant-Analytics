@@ -5,34 +5,55 @@
 /**
  * Generate human-readable explanation for the result
  */
-export function explainResult(intent, chartType) {
+export function explainResult(intent, chartType, meta = {}) {
   if (!intent || typeof intent !== "object") {
-    return "The chart represents the processed data based on your query.";
+    return "The result shows a summary of the loaded data.";
   }
 
   const { metric, dimension, aggregation } = intent;
+  const {
+    totalRows = null,
+    groupCount = null,
+    nonNullCount = null
+  } = meta;
 
   /* ---------------------------------------
-     Fallback explanation
-     --------------------------------------- */
-  if (!metric || !dimension) {
-    return "The chart displays the available data based on your query.";
+     Base explanation (SQL-like)
+---------------------------------------- */
+  let explanation = "";
+
+  if (!metric && !dimension) {
+    explanation =
+      "The result displays a preview and summary of the dataset, similar to inspecting table rows and structure.";
+    return explanation;
   }
 
   /* ---------------------------------------
-     Aggregation language
-     --------------------------------------- */
+     Core aggregation explanation
+---------------------------------------- */
   const aggregationText = getAggregationText(aggregation);
   const chartText = getChartText(chartType);
 
-  /* ---------------------------------------
-     Core explanation
-     --------------------------------------- */
-  let explanation = `This ${chartText} shows the ${aggregationText} of "${metric}" grouped by "${dimension}".`;
+  explanation += `This ${chartText} represents the ${aggregationText} of \`${metric}\` grouped by \`${dimension}\`.`;
 
   /* ---------------------------------------
-     Analytical intelligence (contextual)
-     --------------------------------------- */
+     Dataset context (like df.info)
+---------------------------------------- */
+  if (totalRows !== null) {
+    explanation += ` The dataset contains ${totalRows} rows.`;
+  }
+
+  if (nonNullCount !== null) {
+    explanation += ` ${nonNullCount} records were used for aggregation after excluding missing values.`;
+  }
+
+  if (groupCount !== null) {
+    explanation += ` The data is grouped into ${groupCount} distinct \`${dimension}\` values.`;
+  }
+
+  /* ---------------------------------------
+     Analytical meaning (like pandas docs)
+---------------------------------------- */
   explanation += getAnalyticalInsight(aggregation, chartType);
 
   return explanation;
@@ -42,9 +63,6 @@ export function explainResult(intent, chartType) {
    Intelligence helpers
    ========================================= */
 
-/**
- * Human-readable aggregation text
- */
 function getAggregationText(aggregation) {
   switch (aggregation) {
     case "avg":
@@ -53,13 +71,10 @@ function getAggregationText(aggregation) {
       return "count";
     case "sum":
     default:
-      return "total";
+      return "sum";
   }
 }
 
-/**
- * Human-readable chart text
- */
 function getChartText(chartType) {
   switch (chartType) {
     case "line":
@@ -67,41 +82,46 @@ function getChartText(chartType) {
     case "bar":
       return "bar chart";
     case "table":
-    default:
       return "table";
+    default:
+      return "result";
   }
 }
 
 /**
- * Add contextual analytical insight
+ * Analytical insight similar to SQL / pandas docs
  */
 function getAnalyticalInsight(aggregation, chartType) {
   let insight = "";
 
-  /* Aggregation-based intelligence */
-  if (aggregation === "avg") {
-    insight += " This helps identify typical values and smooth out fluctuations.";
+  if (aggregation === "count") {
+    insight +=
+      " This operation is equivalent to `COUNT(*) GROUP BY`, useful for understanding distribution and frequency.";
   }
 
   if (aggregation === "sum") {
-    insight += " This highlights overall contribution and scale across categories.";
+    insight +=
+      " This operation is equivalent to `SUM(column) GROUP BY`, highlighting total contribution across groups.";
   }
 
-  if (aggregation === "count") {
-    insight += " This reveals frequency and distribution across groups.";
-  }
-
-  /* Chart-based intelligence */
-  if (chartType === "line") {
-    insight += " Trends and patterns over the sequence are easier to observe.";
-  }
-
-  if (chartType === "bar") {
-    insight += " Differences between categories are clearly comparable.";
+  if (aggregation === "avg") {
+    insight +=
+      " This operation is equivalent to `AVG(column) GROUP BY`, useful for comparing typical values.";
   }
 
   if (chartType === "table") {
-    insight += " Exact values are presented for detailed inspection.";
+    insight +=
+      " Tabular output is useful when exact values are more important than visual comparison.";
+  }
+
+  if (chartType === "bar") {
+    insight +=
+      " Bar charts are effective for comparing magnitude across discrete categories.";
+  }
+
+  if (chartType === "line") {
+    insight +=
+      " Line charts are effective for observing trends and changes over an ordered sequence.";
   }
 
   return insight;
