@@ -1,9 +1,13 @@
 /* =========================================
-   Dashboard UI Updates (FINAL)
+   Dashboard UI Updates (FINAL – FIXED)
 ========================================= */
 
 /**
  * Update dashboard textual content
+ * - Keeps chart intact
+ * - Prevents duplicate text
+ * - Safe for repeated renders
+ *
  * @param {Object} params
  * @param {string} params.explanation
  * @param {string[]} params.suggestion
@@ -14,7 +18,7 @@ export function updateDashboard({ explanation, suggestion }) {
 
   /* ---------------------------------------
      Ensure text container exists
----------------------------------------- */
+  ---------------------------------------- */
   let textContainer = dashboard.querySelector(".dashboard-text");
 
   if (!textContainer) {
@@ -23,12 +27,17 @@ export function updateDashboard({ explanation, suggestion }) {
     dashboard.appendChild(textContainer);
   }
 
-  /* Clear previous text only (keep chart) */
-  textContainer.replaceChildren();
+  /* ---------------------------------------
+     Clear ONLY dashboard text
+     (chart container must remain untouched)
+  ---------------------------------------- */
+  while (textContainer.firstChild) {
+    textContainer.removeChild(textContainer.firstChild);
+  }
 
   /* ---------------------------------------
      Explanation (primary context)
----------------------------------------- */
+  ---------------------------------------- */
   if (typeof explanation === "string" && explanation.trim()) {
     const explanationEl = document.createElement("div");
     explanationEl.className = "explanation fade-in";
@@ -38,13 +47,13 @@ export function updateDashboard({ explanation, suggestion }) {
 
   /* ---------------------------------------
      Suggestions (secondary guidance)
----------------------------------------- */
+  ---------------------------------------- */
   if (Array.isArray(suggestion) && suggestion.length > 0) {
     const suggestionWrapper = document.createElement("div");
     suggestionWrapper.className = "suggestion slide-up";
 
     suggestion.forEach((text) => {
-      if (!text) return;
+      if (typeof text !== "string" || !text.trim()) return;
 
       const p = document.createElement("p");
       p.textContent = text;
