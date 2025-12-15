@@ -1,6 +1,6 @@
 /* =========================================
-   BASE STYLES (STRUCTURE ONLY)
-   No colors. No branding. No effects.
+   BASE STYLES (STRUCTURE + CANVAS GLOW)
+   No component styling. No overrides.
 ========================================= */
 
 /* -----------------------------------------
@@ -20,11 +20,60 @@ body {
 }
 
 /* -----------------------------------------
-   Body Defaults
+   Body Defaults + Animated Canvas Glow
 ----------------------------------------- */
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.5;
+
+  /* 🔥 Animated premium canvas */
+  background:
+    radial-gradient(
+      1200px 600px at 50% -20%,
+      rgba(99, 102, 241, 0.18),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 500px at 80% 25%,
+      rgba(56, 189, 248, 0.14),
+      transparent 65%
+    ),
+    radial-gradient(
+      700px 400px at 20% 40%,
+      rgba(34, 197, 94, 0.10),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      #020617 0%,
+      #000000 100%
+    );
+
+  background-attachment: fixed;
+  animation: canvasGlow 18s ease-in-out infinite alternate;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -----------------------------------------
+   Subtle Glow Animation (TOP LEVEL ONLY)
+----------------------------------------- */
+@keyframes canvasGlow {
+  0% {
+    background-position:
+      50% -20%,
+      80% 25%,
+      20% 40%,
+      center;
+  }
+
+  100% {
+    background-position:
+      48% -18%,
+      78% 28%,
+      22% 38%,
+      center;
+  }
 }
 
 /* -----------------------------------------
@@ -34,15 +83,24 @@ body {
   max-width: 1280px;
   margin: 0 auto;
   padding: 64px 32px;
+
   display: flex;
   flex-direction: column;
   gap: 40px;
+
+  position: relative;
+  z-index: 1; /* ensures glow stays behind */
 }
 
 /* -----------------------------------------
-   Typography (Neutral)
+   Typography (Neutral Structure)
 ----------------------------------------- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: 600;
 }
@@ -52,7 +110,7 @@ p {
 }
 
 /* -----------------------------------------
-   Tables (Structural)
+   Tables (Structural Only)
 ----------------------------------------- */
 table {
   width: 100%;
