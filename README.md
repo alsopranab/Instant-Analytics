@@ -32,41 +32,10 @@ Instant Analytics is designed around three principles:
 ---
 
 ## Project Structure
+git add README.md
+git commit -m "Add accurate project structure"
+git push
 
-```
-instant-analytics/
-├── index.html # Application shell
-├── README.md # Documentation
-├── assets/
-│ ├── css/ # Design system and styles
-│ │ ├── tokens.css # Colors, spacing, typography
-│ │ ├── base.css # Resets and layout
-│ │ ├── components.css # UI components
-│ │ ├── charts.css # Chart-specific styles
-│ │ └── motion.css # Transitions and animations
-│ └── js/
-│ ├── app.js # App bootstrap and orchestration
-│ ├── data/ # Data ingestion and schema
-│ │ ├── load.js
-│ │ ├── tabs.js
-│ │ ├── csv.js
-│ │ └── schema.js
-│ ├── intelligence/ # Query understanding
-│ │ ├── intent.js
-│ │ ├── suggest.js
-│ │ └── explain.js
-│ ├── charts/ # Chart engine
-│ │ ├── decide.js
-│ │ ├── transform.js
-│ │ └── render.js
-│ ├── ui/ # UI logic
-│ │ ├── input.js
-│ │ ├── tabs.js
-│ │ ├── query.js
-│ │ └── dashboard.js
-│ └── utils/ # Shared utilities
-│ ├── debounce.js
-│ └── helpers.js
 ```
 
 ---
