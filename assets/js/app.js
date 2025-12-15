@@ -10,7 +10,7 @@ import { createTabs, setActiveTab } from "./data/tabs.js";
 import { updateDataAwareness } from "./ui/dataAwareness.js";
 
 /* ---------- Toggles ---------- */
-import { initToggle } from "./ui/toggles.js";
+import { initToggles } from "./ui/toggles.js";
 import { initThemeToggle } from "./ui/themeToggle.js";
 
 /* ---------- UI ---------- */
@@ -65,10 +65,11 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
         schema: state.schema[tableName]
       });
 
-      $("emptyState").style.display = "none";
+      const empty = $("emptyState");
+      if (empty) empty.style.display = "none";
     });
 
-    // Default table
+    /* Default table */
     state.activeTable = tableNames[0];
     setActiveTab(state.activeTable);
 
@@ -77,7 +78,8 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
       schema: state.schema[state.activeTable]
     });
 
-    $("emptyState").style.display = "none";
+    const empty = $("emptyState");
+    if (empty) empty.style.display = "none";
 
   } catch (err) {
     alert(err.message || "Failed to load data");
@@ -95,8 +97,9 @@ function executeQuery(queryText) {
   if (!rows || !schema) return;
 
   const intent = parseQuery(queryText, schema);
-  const chartType = decideChart(intent);
+  if (!intent) return;
 
+  const chartType = decideChart(intent);
   const { data, meta } = transformData(rows, intent);
 
   if (!data.length) {
@@ -131,11 +134,8 @@ function init() {
   /* Theme Toggle */
   initThemeToggle("themeToggle");
 
-  /* Section Toggles */
-  initToggle("overviewHeader", "dataOverview");
-  initToggle("kpisHeader", "dataKpis");
-  initToggle("previewHeader", "dataPreview");
-  initToggle("suggestHeader", "suggestedQueries");
+  /* Section Toggles (AUTO-WIRED) */
+  initToggles();
 
   const csvInput = $("csvInput");
   const sheetInput = $("sheetInput");
