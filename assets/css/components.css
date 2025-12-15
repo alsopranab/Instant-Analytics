@@ -1,35 +1,39 @@
 /* =========================================
-   UI Components
-   ========================================= */
+   UI Components (Polished)
+========================================= */
 
 /* -----------------------------------------
    Inputs
-   ----------------------------------------- */
+----------------------------------------- */
 .control-input {
   appearance: none;
   width: 100%;
   padding: var(--space-3) var(--space-4);
   font-size: var(--font-size-md);
-  border: 1px solid var(--color-gray-300);
+  border: 1px solid #d1d5db; /* gray-300 */
   border-radius: var(--radius-md);
-  background-color: var(--color-white);
-  color: var(--color-gray-800);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #ffffff;
+  color: #111827;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .control-input::placeholder {
-  color: var(--color-gray-400);
+  color: #9ca3af; /* gray-400 */
 }
 
 .control-input:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-muted);
+  border-color: #4f46e5; /* indigo */
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
 }
 
 /* -----------------------------------------
    Buttons (future-safe)
-   ----------------------------------------- */
+----------------------------------------- */
 .button {
   display: inline-flex;
   align-items: center;
@@ -41,16 +45,21 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .button-primary {
-  background-color: var(--color-primary);
-  color: var(--color-white);
+  background-color: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
 }
 
 .button-primary:hover {
-  background-color: var(--color-primary-hover);
+  background-color: #6366f1;
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
 }
 
 .button:active {
@@ -59,53 +68,69 @@
 
 /* -----------------------------------------
    Tabs
-   ----------------------------------------- */
+----------------------------------------- */
 .tabs {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 1px solid var(--color-gray-200);
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .tab {
   padding: var(--space-3) var(--space-4);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-600);
+  color: #6b7280; /* gray-500 */
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .tab:hover {
-  color: var(--color-gray-800);
+  color: #111827;
 }
 
 .tab.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+  color: #4f46e5;
+  border-bottom-color: #4f46e5;
 }
 
 /* -----------------------------------------
    Panels
-   ----------------------------------------- */
+----------------------------------------- */
 .panel {
-  background-color: var(--color-white);
+  background-color: #ffffff;
   border-radius: var(--radius-md);
   padding: var(--space-6);
-  box-shadow: var(--shadow-sm);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 /* -----------------------------------------
    Text Blocks
-   ----------------------------------------- */
+----------------------------------------- */
 .explanation {
   margin-top: var(--space-4);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
+  color: #1e3a8a;
+  background-color: #eef2ff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  animation: fadeIn 0.3s ease;
 }
 
 .suggestion {
   margin-top: var(--space-2);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: #065f46;
+  background-color: #ecfdf5;
+  padding: 12px 14px;
+  border-radius: 10px;
+  animation: fadeIn 0.3s ease;
 }
+
+/* -----------------------------------------
+   Micro Animations
+-----
