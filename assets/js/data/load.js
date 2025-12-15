@@ -1,39 +1,36 @@
 /* =========================================
-   CSV Load Pipeline
+   Unified Data Load Pipeline
    ========================================= */
 
 import { parseCSV } from "./csv.js";
 import { inferSchema } from "./schema.js";
+import { loadGoogleSheet } from "./sheets.js";
 
 /**
- * Load and process CSV file
+ * Load data from CSV file OR Google Sheet
  */
-export async function loadCSV(file) {
-  const text = await file.text();
-  const rows = parseCSV(text);
+export async function loadData({ file, sheetUrl }) {
+  let csvText = "";
 
-  if (!rows || rows.length === 0) {
-    return {
-      rawData: [],
-      tables: {},
-      schema: {}
-    };
+  if (file) {
+    csvText = await file.text();
+  } else if (sheetUrl) {
+    csvText = await loadGoogleSheet(sheetUrl);
+  } else {
+    throw new Error("No data source provided");
   }
 
-  // Single-table model (future-safe for multi-table)
+  const rows = parseCSV(csvText);
+
+  if (!rows.length) {
+    return { rawData: [], tables: {}, schema: {} };
+  }
+
   const tableName = "data";
-
-  const tables = {
-    [tableName]: rows
-  };
-
-  const schema = {
-    [tableName]: inferSchema(rows)
-  };
 
   return {
     rawData: rows,
-    tables,
-    schema
+    tables: { [tableName]: rows },
+    schema: { [tableName]: inferSchema(rows) }
   };
 }
