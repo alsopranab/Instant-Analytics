@@ -6,8 +6,10 @@
 import { loadData } from "./data/load.js";
 import { createTabs, setActiveTab } from "./data/tabs.js";
 
+/* ---------- Data Awareness (SQL / df.info / df.head) ---------- */
+import { updateDataAwareness } from "./ui/dataAwareness.js";
+
 /* ---------- Persistent UI ---------- */
-import { updateDataOverview } from "./ui/dataOverview.js";
 import { initInput } from "./ui/input.js";
 import { initQuery } from "./ui/query.js";
 import { updateDashboard } from "./ui/dashboard.js";
@@ -64,11 +66,11 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
       state.activeTable = tableName;
       setActiveTab(tableName);
 
-      // 🔹 Always update data overview on table change
-      updateDataOverview(
-        state.tables[tableName],
-        state.schema[tableName]
-      );
+      // 🔹 SINGLE SOURCE: update ALL data awareness views
+      updateDataAwareness({
+        rows: state.tables[tableName],
+        schema: state.schema[tableName]
+      });
 
       const empty = $("emptyState");
       if (empty) empty.style.display = "none";
@@ -78,11 +80,11 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
     state.activeTable = tableNames[0];
     setActiveTab(state.activeTable);
 
-    // 🔹 Initial data overview render
-    updateDataOverview(
-      state.tables[state.activeTable],
-      state.schema[state.activeTable]
-    );
+    // 🔹 Initial awareness render
+    updateDataAwareness({
+      rows: state.tables[state.activeTable],
+      schema: state.schema[state.activeTable]
+    });
 
     const empty = $("emptyState");
     if (empty) empty.style.display = "none";
@@ -108,21 +110,21 @@ function executeQuery(queryText) {
   // 2️⃣ Decide visualization
   const chartType = decideChart(intent);
 
-  // 3️⃣ Transform data + metadata
+  // 3️⃣ Transform data
   const transformed = transformData(data, intent);
 
-  // 4️⃣ Render chart/table
+  // 4️⃣ Render chart / table
   renderChart({
     chartType,
-    data: transformed.data,
+    data: transformed.data ?? transformed,
     title: "Result",
     xLabel: intent.dimension,
     yLabel: intent.aggregation.toUpperCase()
   });
 
-  // 5️⃣ Update explanation & suggestions (ONCE)
+  // 5️⃣ Explanation + suggestions
   updateDashboard({
-    explanation: explainResult(intent, chartType, transformed.meta),
+    explanation: explainResult(intent, chartType),
     suggestion: suggestChart(intent)
   });
 
