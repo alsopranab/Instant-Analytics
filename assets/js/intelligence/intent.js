@@ -12,27 +12,26 @@ function detectAggregation(query) {
   if (/\b(count|number of|how many)\b/.test(q)) return "count";
   if (/\b(sum|total|overall)\b/.test(q)) return "sum";
 
-  // Ranking words imply COUNT for entity data
   if (/\b(most|highest|top|maximum|max)\b/.test(q)) return "count";
 
-  return null; // allow smart fallback later
+  return null;
 }
 
 /**
- * Detect explicit dimension keywords
+ * Detect explicit dimension phrase
  */
 function detectExplicitDimension(query) {
   const q = query.toLowerCase();
 
   const patterns = [
-    { regex: /\bby\s+([\w\s]+)/, index: 1 },
-    { regex: /\bper\s+([\w\s]+)/, index: 1 },
-    { regex: /\bgrouped\s+by\s+([\w\s]+)/, index: 1 }
+    /\bby\s+([\w\s]+)/,
+    /\bper\s+([\w\s]+)/,
+    /\bgrouped\s+by\s+([\w\s]+)/
   ];
 
-  for (const { regex, index } of patterns) {
+  for (const regex of patterns) {
     const match = q.match(regex);
-    if (match) return match[index].trim();
+    if (match) return match[1].trim();
   }
 
   return null;
@@ -53,7 +52,7 @@ function matchSchemaField(query, schema, typeFilter = null) {
 }
 
 /**
- * Pick best fallback dimension (string-like field)
+ * Pick best fallback dimension
  */
 function fallbackDimension(schema, metric) {
   return Object.keys(schema).find(
@@ -75,28 +74,31 @@ export function parseQuery(query, schema) {
     };
   }
 
-  // Step 1: aggregation intent
+  // 1️⃣ Aggregation
   let aggregation = detectAggregation(query);
 
-  // Step 2: detect numeric metric first
+  // 2️⃣ Metric (numeric preferred)
   const metric = matchSchemaField(query, schema, "number");
 
-  // Step 3: detect dimension
-  const explicitDimension = detectExplicitDimension(query);
-  const dimension =
-    (explicitDimension && schema[explicitDimension]
-      ? explicitDimension
-      : null) || fallbackDimension(schema, metric);
+  // 3️⃣ Dimension (explicit → schema match → fallback)
+  const explicitPhrase = detectExplicitDimension(query);
+  const explicitDimension =
+    explicitPhrase
+      ? matchSchemaField(explicitPhrase, schema, "string")
+      : null;
 
-  // Step 4: intelligent defaults
-  if (!metric) {
-    aggregation = "count";
+  const dimension =
+    explicitDimension || fallbackDimension(schema, metric);
+
+  // 4️⃣ Defaults
+  if (!aggregation) {
+    aggregation = metric ? "sum" : "count";
   }
 
-  // Step 5: confidence scoring
+  // 5️⃣ Confidence
   let confidence = "high";
-  if (!dimension) confidence = "medium";
-  if (!metric && !dimension) confidence = "low";
+  if (!dimension || !metric) confidence = "medium";
+  if (!dimension && !metric) confidence = "low";
 
   return {
     raw: query,
