@@ -1,6 +1,8 @@
 /* =========================================
-   Data Transformation for Charts
+   Data Transformation for Charts (FINAL)
    ========================================= */
+
+import { toNumber, isEmpty } from "../utils/helpers.js";
 
 /**
  * Transform raw data into aggregated chart data
@@ -8,46 +10,48 @@
 export function transformData(rows, intent) {
   const { metric, dimension, aggregation } = intent;
 
-  if (!metric || !dimension) {
-    return rows;
+  if (!Array.isArray(rows) || !metric || !dimension) {
+    return [];
   }
 
-  const grouped = {};
+  const grouped = Object.create(null);
 
   rows.forEach((row) => {
-    const key = row[dimension] ?? "Unknown";
-    const value = parseFloat(row[metric]);
+    const key = isEmpty(row[dimension]) ? "Unknown" : String(row[dimension]);
+    const value = toNumber(row[metric]);
 
     if (!grouped[key]) {
-      grouped[key] = {
-        sum: 0,
-        count: 0
-      };
+      grouped[key] = { sum: 0, count: 0 };
     }
 
-    if (!isNaN(value)) {
+    if (value !== null) {
       grouped[key].sum += value;
       grouped[key].count += 1;
     }
   });
 
-  return Object.keys(grouped).map((key) => {
-    let result;
+  const result = Object.entries(grouped).map(([label, stats]) => {
+    let value;
 
-    if (aggregation === "avg") {
-      result =
-        grouped[key].count === 0
-          ? 0
-          : grouped[key].sum / grouped[key].count;
-    } else if (aggregation === "count") {
-      result = grouped[key].count;
-    } else {
-      result = grouped[key].sum;
+    switch (aggregation) {
+      case "avg":
+        value = stats.count ? stats.sum / stats.count : 0;
+        break;
+      case "count":
+        value = stats.count;
+        break;
+      default:
+        value = stats.sum;
     }
 
     return {
-      label: key,
-      value: Number(result.toFixed(2))
+      label,
+      value: Number(value.toFixed(2))
     };
   });
+
+  /* ---------------------------------------
+     Stable sorting (descending)
+     --------------------------------------- */
+  return result.sort((a, b) => b.value - a.value);
 }
