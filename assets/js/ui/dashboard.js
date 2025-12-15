@@ -1,6 +1,6 @@
 /* =========================================
    Dashboard UI Updates (FINAL)
-   ========================================= */
+========================================= */
 
 /**
  * Update dashboard textual content
@@ -14,7 +14,7 @@ export function updateDashboard({ explanation, suggestion }) {
 
   /* ---------------------------------------
      Ensure text container exists
-     --------------------------------------- */
+---------------------------------------- */
   let textContainer = dashboard.querySelector(".dashboard-text");
 
   if (!textContainer) {
@@ -23,13 +23,13 @@ export function updateDashboard({ explanation, suggestion }) {
     dashboard.appendChild(textContainer);
   }
 
-  /* Clear previous text only */
-  textContainer.innerHTML = "";
+  /* Clear previous text only (keep chart) */
+  textContainer.replaceChildren();
 
   /* ---------------------------------------
-     Explanation
-     --------------------------------------- */
-  if (explanation) {
+     Explanation (primary context)
+---------------------------------------- */
+  if (typeof explanation === "string" && explanation.trim()) {
     const explanationEl = document.createElement("div");
     explanationEl.className = "explanation fade-in";
     explanationEl.textContent = explanation;
@@ -37,13 +37,15 @@ export function updateDashboard({ explanation, suggestion }) {
   }
 
   /* ---------------------------------------
-     Suggestions
-     --------------------------------------- */
+     Suggestions (secondary guidance)
+---------------------------------------- */
   if (Array.isArray(suggestion) && suggestion.length > 0) {
     const suggestionWrapper = document.createElement("div");
     suggestionWrapper.className = "suggestion slide-up";
 
     suggestion.forEach((text) => {
+      if (!text) return;
+
       const p = document.createElement("p");
       p.textContent = text;
       suggestionWrapper.appendChild(p);
