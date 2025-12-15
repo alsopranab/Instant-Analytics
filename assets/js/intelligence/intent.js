@@ -1,6 +1,6 @@
 /* =========================================
    Query Intent Parsing Intelligence (FINAL)
-   ========================================= */
+========================================= */
 
 /**
  * Detect aggregation intent from query
@@ -12,8 +12,10 @@ function detectAggregation(query) {
   if (/\b(count|number of|how many)\b/.test(q)) return "count";
   if (/\b(sum|total|overall)\b/.test(q)) return "sum";
 
-  /* Default analytical assumption */
-  return "sum";
+  // Ranking words imply COUNT for entity data
+  if (/\b(most|highest|top|maximum|max)\b/.test(q)) return "count";
+
+  return null; // important: allow smart fallback later
 }
 
 /**
@@ -23,14 +25,14 @@ function detectExplicitDimension(query) {
   const q = query.toLowerCase();
 
   const patterns = [
-    { regex: /\bby\s+(\w+)/, index: 1 },
-    { regex: /\bper\s+(\w+)/, index: 1 },
-    { regex: /\bgrouped\s+by\s+(\w+)/, index: 1 }
+    { regex: /\bby\s+([\w\s]+)/, index: 1 },
+    { regex: /\bper\s+([\w\s]+)/, index: 1 },
+    { regex: /\bgrouped\s+by\s+([\w\s]+)/, index: 1 }
   ];
 
   for (const { regex, index } of patterns) {
     const match = q.match(regex);
-    if (match) return match[index];
+    if (match) return match[index].trim();
   }
 
   return null;
@@ -51,7 +53,7 @@ function matchSchemaField(query, schema, typeFilter = null) {
 }
 
 /**
- * Fallback dimension selection
+ * Pick best fallback dimension (string-like field)
  */
 function fallbackDimension(schema, metric) {
   return Object.keys(schema).find(
@@ -66,30 +68,35 @@ export function parseQuery(query, schema) {
   if (!query || typeof query !== "string" || !schema) {
     return {
       raw: query,
-      aggregation: "sum",
+      aggregation: "count",
       metric: null,
       dimension: null,
       confidence: "low"
     };
   }
 
-  const aggregation = detectAggregation(query);
+  // Step 1: aggregation intent
+  let aggregation = detectAggregation(query);
 
-  /* Metric detection (prefer numeric fields) */
-  const metric =
-    matchSchemaField(query, schema, "number") ||
-    matchSchemaField(query, schema);
+  // Step 2: detect numeric metric first
+  let metric = matchSchemaField(query, schema, "number");
 
-  /* Dimension detection */
+  // Step 3: detect dimension
   const explicitDimension = detectExplicitDimension(query);
-  const dimension =
+  let dimension =
     (explicitDimension && schema[explicitDimension]
       ? explicitDimension
       : null) || fallbackDimension(schema, metric);
 
-  /* Confidence scoring (simple but effective) */
+  // Step 4: intelligent defaults
+  // If no numeric metric → this is entity data → COUNT
+  if (!metric) {
+    aggregation = "count";
+  }
+
+  // Step 5: confidence scoring
   let confidence = "high";
-  if (!metric || !dimension) confidence = "medium";
+  if (!dimension) confidence = "medium";
   if (!metric && !dimension) confidence = "low";
 
   return {
