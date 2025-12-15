@@ -1,16 +1,29 @@
 /* =========================================
-   CSV Input UI
+   CSV Input UI (FINAL)
    ========================================= */
 
 /**
  * Initialize CSV input interactions
  */
 export function initInput() {
-  const input = document.getElementById("csvInput");
+  const csvInput = document.getElementById("csvInput");
+  const sheetInput = document.getElementById("sheetInput");
 
-  if (!input) return;
+  if (!csvInput) return;
 
-  input.addEventListener("click", () => {
-    input.value = "";
+  /* ---------------------------------------
+     Reset CSV input on click
+     --------------------------------------- */
+  csvInput.addEventListener("click", () => {
+    csvInput.value = "";
+  });
+
+  /* ---------------------------------------
+     Clear sheet input when CSV is chosen
+     --------------------------------------- */
+  csvInput.addEventListener("change", () => {
+    if (sheetInput) {
+      sheetInput.value = "";
+    }
   });
 }
