@@ -1,22 +1,28 @@
 /* =========================================
-   Chart Type Decision
+   Chart Type Decision (FINAL)
    ========================================= */
 
 /**
  * Decide chart type based on intent
  */
 export function decideChart(intent) {
-  if (!intent.metric || !intent.dimension) {
+  if (!intent || typeof intent !== "object") {
     return "table";
   }
 
-  if (intent.aggregation === "count") {
-    return "bar";
+  const { metric, dimension, aggregation } = intent;
+
+  if (!metric || !dimension) {
+    return "table";
   }
 
-  if (intent.aggregation === "avg") {
-    return "line";
+  switch (aggregation) {
+    case "avg":
+      return "line";
+    case "count":
+      return "bar";
+    case "sum":
+    default:
+      return "bar";
   }
-
-  return "bar";
 }
