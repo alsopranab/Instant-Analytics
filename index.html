@@ -34,6 +34,20 @@
     <!-- Controls -->
     <section class="controls">
 
+      <!-- Google Sheet Input -->
+      <div class="control-group">
+        <label for="sheetInput" class="control-label">
+          Google Sheet (public)
+        </label>
+        <input
+          type="text"
+          id="sheetInput"
+          class="control-input"
+          placeholder="https://docs.google.com/spreadsheets/..."
+          autocomplete="off"
+        />
+      </div>
+
       <!-- CSV Upload -->
       <div class="control-group">
         <label for="csvInput" class="control-label">Upload CSV</label>
@@ -71,7 +85,7 @@
 
     <!-- Empty State -->
     <section class="empty-state" id="emptyState">
-      <p>Upload a CSV file to begin analysis.</p>
+      <p>Upload a CSV file or paste a Google Sheet link to begin analysis.</p>
     </section>
 
   </div>
