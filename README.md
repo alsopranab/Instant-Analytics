@@ -104,7 +104,7 @@ instant-analytics/
 ```
 ---
 
-Technology Stack
+## Technology Stack
 
 HTML, CSS, and Vanilla JavaScript
 
@@ -116,7 +116,9 @@ GitHub Pages compatible deployment
 
 No backend is required for the core functionality.
 
-Design Principles
+---
+
+## Design Principles
 
 Minimal interface focused on content
 
@@ -130,7 +132,8 @@ Predictable behavior over complex features
 
 The goal is to feel like a professional analytics product rather than a demonstration.
 
-Intended Users
+---
+## Intended Users
 
 Non technical users
 
@@ -144,7 +147,9 @@ Anyone needing fast insights from spreadsheet data
 
 If a user can describe what they want in a sentence, they can use this tool.
 
-Future Enhancements
+---
+
+## Future Enhancements
 
 AI assisted intent parsing
 
@@ -156,6 +161,7 @@ Date range and category filters
 
 Private sheet access with authentication
 
-License
+---
+## License
 
 This project is open source and intended for learning, experimentation, and practical use.
