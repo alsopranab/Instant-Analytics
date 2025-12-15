@@ -1,5 +1,5 @@
 /* =========================================
-   App Bootstrap & Orchestration (FINAL)
+   App Bootstrap & Orchestration (FINAL – CLEAN)
 ========================================= */
 
 /* ---------- Data Loading ---------- */
@@ -43,6 +43,19 @@ const state = {
 const $ = (id) => document.getElementById(id);
 
 /* -----------------------------------------
+   Helpers: UI State
+----------------------------------------- */
+function showDashboard() {
+  $("emptyState")?.setAttribute("hidden", true);
+  $("dashboard")?.removeAttribute("hidden");
+}
+
+function showEmptyState() {
+  $("dashboard")?.setAttribute("hidden", true);
+  $("emptyState")?.removeAttribute("hidden");
+}
+
+/* -----------------------------------------
    Data Load Handler
 ----------------------------------------- */
 async function handleDataLoad({ file = null, sheetUrl = null }) {
@@ -65,8 +78,7 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
         schema: state.schema[tableName]
       });
 
-      const empty = $("emptyState");
-      if (empty) empty.style.display = "none";
+      showDashboard();
     });
 
     /* Default table */
@@ -78,10 +90,10 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
       schema: state.schema[state.activeTable]
     });
 
-    const empty = $("emptyState");
-    if (empty) empty.style.display = "none";
+    showDashboard();
 
   } catch (err) {
+    showEmptyState();
     alert(err.message || "Failed to load data");
   }
 }
@@ -102,10 +114,12 @@ function executeQuery(queryText) {
   const chartType = decideChart(intent);
   const { data, meta } = transformData(rows, intent);
 
-  if (!data.length) {
+  const suggestions = suggestChart(intent) || [];
+
+  if (!Array.isArray(data) || !data.length) {
     updateDashboard({
       explanation: "No results found for this query.",
-      suggestion: suggestChart(intent)
+      suggestion: suggestions
     });
     return;
   }
@@ -120,7 +134,7 @@ function executeQuery(queryText) {
 
   updateDashboard({
     explanation: explainResult(intent, chartType, meta),
-    suggestion: suggestChart(intent)
+    suggestion: suggestions
   });
 }
 
@@ -134,7 +148,7 @@ function init() {
   /* Theme Toggle */
   initThemeToggle("themeToggle");
 
-  /* Section Toggles (AUTO-WIRED) */
+  /* Section Toggles */
   initToggles();
 
   const csvInput = $("csvInput");
