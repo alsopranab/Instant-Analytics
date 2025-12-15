@@ -1,9 +1,11 @@
 /* =========================================
-   Query Input Handling (FINAL – CLEAN)
+   Query Input Handling (FINAL)
 ========================================= */
 
 /**
  * Initialize query input
+ * Triggers analytics execution on Enter key
+ *
  * @param {Function} onQueryExecute
  */
 export function initQuery(onQueryExecute) {
@@ -14,20 +16,14 @@ export function initQuery(onQueryExecute) {
   const queryInput = document.getElementById("queryInput");
   if (!queryInput) return;
 
-  const execute = () => {
-    const query = queryInput.value.trim();
-    if (!query) return;
-    onQueryExecute(query);
-  };
-
   queryInput.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
     event.preventDefault();
     if (event.repeat) return;
 
-    execute();
-  });
+    const query = queryInput.value.trim();
+    if (!query) return;
 
-  /* 🔥 Safe programmatic execution */
-  queryInput.addEventListener("execute-query", execute);
+    onQueryExecute(query);
+  });
 }
