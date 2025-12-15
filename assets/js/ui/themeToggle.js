@@ -1,53 +1,50 @@
 /* =========================================
-   Theme Toggle (Light / Dark) – Deno Safe
+   Theme Toggle (Light / Dark)
+   - Deno safe
+   - Browser safe
+   - GitHub Pages safe
 ========================================= */
 
-const STORAGE_KEY = "instant-analytics-theme";
+const STORAGE_KEY = "ia-theme";
 
 /**
  * Apply theme to document
  */
 function applyTheme(theme) {
-  globalThis.document?.documentElement?.setAttribute("data-theme", theme);
+  document.documentElement.dataset.theme = theme;
 }
 
 /**
- * Get saved theme or system preference
+ * Detect system preference
  */
-function getInitialTheme() {
-  const saved = globalThis.localStorage?.getItem(STORAGE_KEY);
-  if (saved) return saved;
-
-  const prefersDark =
-    globalThis.matchMedia &&
-    globalThis.matchMedia("(prefers-color-scheme: dark)").matches;
-
-  return prefersDark ? "dark" : "light";
+function getSystemTheme() {
+  return globalThis.matchMedia &&
+    globalThis.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 /**
- * Toggle theme
+ * Initialize theme toggle
  */
-function toggleTheme() {
-  const root = globalThis.document?.documentElement;
-  if (!root) return;
-
-  const current = root.getAttribute("data-theme") || "light";
-  const next = current === "dark" ? "light" : "dark";
-
-  applyTheme(next);
-  globalThis.localStorage?.setItem(STORAGE_KEY, next);
-}
-
-/**
- * Initialize theme system
- */
-export function initThemeToggle() {
-  const theme = getInitialTheme();
-  applyTheme(theme);
-
-  const btn = globalThis.document?.getElementById("themeToggle");
+export function initThemeToggle(buttonId) {
+  const btn = document.getElementById(buttonId);
   if (!btn) return;
 
-  btn.addEventListener("click", toggleTheme);
+  const saved = localStorage.getItem(STORAGE_KEY);
+  const theme = saved || getSystemTheme();
+
+  applyTheme(theme);
+  btn.textContent = theme === "dark" ? "☀️ Light" : "🌙 Dark";
+
+  btn.addEventListener("click", () => {
+    const next =
+      document.documentElement.dataset.theme === "dark"
+        ? "light"
+        : "dark";
+
+    applyTheme(next);
+    localStorage.setItem(STORAGE_KEY, next);
+    btn.textContent = next === "dark" ? "☀️ Light" : "🌙 Dark";
+  });
 }
