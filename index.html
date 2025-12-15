@@ -10,6 +10,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Instant Analytics</title>
 
+  <!-- Silence favicon 404 -->
+  <link rel="icon" href="data:," />
+
   <!-- ======================================
        CORE DESIGN SYSTEM
        (ORDER MATTERS)
@@ -40,42 +43,44 @@
     </header>
 
     <!-- ======================================
-         CONTROLS
+         CONTROLS (STABLE WRAPPER)
     ======================================= -->
     <section class="controls">
+      <div class="controls-inner">
 
-      <div class="control-group">
-        <label for="sheetInput">Google Sheet (public)</label>
-        <input
-          type="text"
-          id="sheetInput"
-          class="control-input"
-          placeholder="https://docs.google.com/spreadsheets/..."
-          autocomplete="off"
-        />
+        <div class="control-group">
+          <label for="sheetInput">Google Sheet (public)</label>
+          <input
+            type="text"
+            id="sheetInput"
+            class="control-input"
+            placeholder="https://docs.google.com/spreadsheets/..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="control-group">
+          <label for="csvInput">Upload CSV</label>
+          <input
+            type="file"
+            id="csvInput"
+            class="control-input"
+            accept=".csv"
+          />
+        </div>
+
+        <div class="control-group query-group">
+          <label for="queryInput">Ask a question</label>
+          <input
+            type="text"
+            id="queryInput"
+            class="control-input"
+            placeholder="e.g. total revenue by region"
+            autocomplete="off"
+          />
+        </div>
+
       </div>
-
-      <div class="control-group">
-        <label for="csvInput">Upload CSV</label>
-        <input
-          type="file"
-          id="csvInput"
-          class="control-input"
-          accept=".csv"
-        />
-      </div>
-
-      <div class="control-group query-group">
-        <label for="queryInput">Ask a question</label>
-        <input
-          type="text"
-          id="queryInput"
-          class="control-input"
-          placeholder="e.g. total revenue by region"
-          autocomplete="off"
-        />
-      </div>
-
     </section>
 
     <!-- ======================================
@@ -88,14 +93,27 @@
     </nav>
 
     <!-- ======================================
-         DASHBOARD (TOP PRIORITY)
+         DASHBOARD / EMPTY STATE CONTAINER
     ======================================= -->
-    <main
-      id="dashboard"
-      class="dashboard"
-      aria-live="polite">
-      <!-- Chart + explanation injected here -->
-    </main>
+    <section id="dashboardWrapper">
+
+      <main
+        id="dashboard"
+        class="dashboard"
+        aria-live="polite"
+        hidden>
+        <!-- Chart + explanation injected here -->
+      </main>
+
+      <section
+        id="emptyState"
+        class="empty-state">
+        <p>
+          Upload a CSV file or paste a Google Sheet link to begin analysis.
+        </p>
+      </section>
+
+    </section>
 
     <!-- ======================================
          SUGGESTED QUERIES (TOGGLE)
@@ -125,17 +143,6 @@
         <section id="dataKpis"></section>
         <section id="dataPreview"></section>
       </div>
-    </section>
-
-    <!-- ======================================
-         EMPTY STATE
-    ======================================= -->
-    <section
-      id="emptyState"
-      class="empty-state">
-      <p>
-        Upload a CSV file or paste a Google Sheet link to begin analysis.
-      </p>
     </section>
 
   </div>
