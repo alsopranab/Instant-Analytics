@@ -13,7 +13,9 @@ function clearChart() {
   const dashboard = getDashboard();
   if (!dashboard) return;
 
-  dashboard.querySelectorAll(".chart-container").forEach(el => el.remove());
+  dashboard
+    .querySelectorAll(".chart-container")
+    .forEach(el => el.remove());
 }
 
 function createContainer() {
@@ -70,7 +72,8 @@ function renderLegend(parent, data) {
 
     const swatch = document.createElement("span");
     swatch.className = "legend-swatch";
-    swatch.style.backgroundColor = COLORS[i % COLORS.length];
+    swatch.style.backgroundColor =
+      COLORS[i % COLORS.length];
 
     const label = document.createElement("span");
     label.textContent = d.label;
@@ -87,16 +90,21 @@ function renderLegend(parent, data) {
    SVG BASE
 ----------------------------------------- */
 function createSVG(container) {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const svg = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "svg"
+  );
+
   svg.classList.add("chart-svg");
   svg.setAttribute("viewBox", "0 0 1000 360");
   svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
   container.appendChild(svg);
   return svg;
 }
 
 /* -----------------------------------------
-   BAR CHART
+   BAR CHART (WITH X-AXIS LABELS)
 ----------------------------------------- */
 function renderBarChart(container, data) {
   const svg = createSVG(container);
@@ -113,6 +121,7 @@ function renderBarChart(container, data) {
     const x = padding + i * barWidth;
     const y = padding + (height - barHeight);
 
+    /* Bar */
     const rect = document.createElementNS(svg.namespaceURI, "rect");
     rect.setAttribute("x", x + barWidth * 0.15);
     rect.setAttribute("y", y);
@@ -121,6 +130,7 @@ function renderBarChart(container, data) {
     rect.setAttribute("rx", 6);
     rect.setAttribute("fill", COLORS[i % COLORS.length]);
 
+    /* Value label (top of bar) */
     const value = document.createElementNS(svg.namespaceURI, "text");
     value.setAttribute("x", x + barWidth / 2);
     value.setAttribute("y", y - 8);
@@ -128,8 +138,17 @@ function renderBarChart(container, data) {
     value.setAttribute("class", "chart-label");
     value.textContent = formatNumber(d.value);
 
+    /* Category label (X-axis) */
+    const category = document.createElementNS(svg.namespaceURI, "text");
+    category.setAttribute("x", x + barWidth / 2);
+    category.setAttribute("y", padding + height + 24);
+    category.setAttribute("text-anchor", "middle");
+    category.setAttribute("class", "chart-category");
+    category.textContent = d.label;
+
     svg.appendChild(rect);
     svg.appendChild(value);
+    svg.appendChild(category);
   });
 
   renderLegend(container, data);
