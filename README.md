@@ -1,167 +1,121 @@
 # Instant Analytics
 
-Instant Analytics is a lightweight web application that allows anyone to visualize data instantly using plain language. Users can connect a Google Sheet or upload a CSV file, select the relevant sheet tab, and describe what they want to see. The application automatically interprets the request and generates an appropriate visualization.
-
-The project is designed for users with no analytics or technical background who need fast insights without configuration, setup, or prior knowledge.
+Instant Analytics is a lightweight, client-side analytics tool that allows users to upload CSV data and ask natural-language questions to generate charts, insights, and explanations instantly — without a backend or external libraries.
 
 ---
 
-## Problem Statement
+## Key Capabilities
 
-Many people store data in Google Sheets but struggle to extract insights quickly. Traditional analytics tools require configuration, chart selection, and technical understanding. This creates friction, especially when insights are needed urgently.
+- Upload CSV files directly in the browser
+- Automatically detect schema and data types
+- Ask natural-language questions (e.g. “Show total sales by month”)
+- Intelligent chart selection (bar, line, pie, table)
+- Data transformation and aggregation on the fly
+- Clear explanations of what the chart represents
+- Zero dependencies, zero build tools
 
-Instant Analytics removes this friction by allowing users to describe what they want in simple language and see results immediately.
+---
+
+## Philosophy
+
+Instant Analytics is designed around three principles:
+
+1. **Instant Feedback**  
+   No setup, no server, no waiting. Upload and analyze immediately.
+
+2. **Human Queries, Machine Logic**  
+   Users think in questions. The system translates intent into analytics.
+
+3. **Strict Separation of Concerns**  
+   Data, intelligence, visualization, and UI are isolated and testable.
+
+---
+
+## Project Structure
+
+```
+instant-analytics/
+├── index.html # Application shell
+├── README.md # Documentation
+├── assets/
+│ ├── css/ # Design system and styles
+│ │ ├── tokens.css # Colors, spacing, typography
+│ │ ├── base.css # Resets and layout
+│ │ ├── components.css # UI components
+│ │ ├── charts.css # Chart-specific styles
+│ │ └── motion.css # Transitions and animations
+│ └── js/
+│ ├── app.js # App bootstrap and orchestration
+│ ├── data/ # Data ingestion and schema
+│ │ ├── load.js
+│ │ ├── tabs.js
+│ │ ├── csv.js
+│ │ └── schema.js
+│ ├── intelligence/ # Query understanding
+│ │ ├── intent.js
+│ │ ├── suggest.js
+│ │ └── explain.js
+│ ├── charts/ # Chart engine
+│ │ ├── decide.js
+│ │ ├── transform.js
+│ │ └── render.js
+│ ├── ui/ # UI logic
+│ │ ├── input.js
+│ │ ├── tabs.js
+│ │ ├── query.js
+│ │ └── dashboard.js
+│ └── utils/ # Shared utilities
+│ ├── debounce.js
+│ └── helpers.js
+```
 
 ---
 
 ## How It Works
 
-1. Paste a public Google Sheet link or upload a CSV file  
-2. The application detects all available sheet tabs  
-3. Select the tab to analyze  
-4. The system automatically detects column types  
-5. Describe the desired insight in plain English  
-6. The application determines the metric, grouping, and chart type  
-7. The visualization is rendered instantly with a clear explanation  
+1. User uploads a CSV file
+2. The system parses and infers schema
+3. Data is organized into tabs (tables)
+4. User enters a natural-language query
+5. Intent is detected (metric, dimension, aggregation)
+6. A chart type is selected automatically
+7. Data is transformed and rendered
+8. Explanation and suggestions are shown
+
+All of this happens **entirely in the browser**.
 
 ---
 
-## Supported Visualizations
+## Usage
 
-Instant Analytics focuses on clarity and performance. The following outputs are supported:
+1. Open `index.html` in a modern browser
+2. Upload a `.csv` file
+3. Select a data tab if multiple tables exist
+4. Type a question in plain English
+5. View the generated chart and explanation
 
-- Line charts for trends over time  
-- Bar charts for category comparisons  
-- Pie charts for distribution analysis  
-- KPI cards for single value summaries  
-
-All visualizations follow a monochrome style to ensure consistency and readability.
-
----
-
-## Data Sources
-
-The application supports the following data sources:
-
-- Public Google Sheets with multiple tabs  
-- CSV file uploads  
-
-Each sheet tab is treated as an independent dataset to avoid ambiguity and ensure accurate analysis.
+No installation required.
 
 ---
 
-## Intelligence Approach
+## Browser Support
 
-Instant Analytics uses a hybrid intelligence approach focused on reliability and explainability.
+- Chrome (latest)
+- Edge (latest)
+- Firefox (latest)
 
-- Rule-based logic handles common analytical requests  
-- Column types and keywords are matched deterministically  
-- Each visualization includes a clear explanation of how it was generated  
-
-This approach avoids unpredictable behavior while covering most real-world use cases.
-
-An optional future upgrade can introduce AI-assisted intent parsing without changing the core architecture.
-
----
-```
-## Project Structure
-
-
-instant-analytics/
-├── index.html
-├── README.md
-├── assets/
-│   ├── css/
-│   │   ├── tokens.css
-│   │   ├── base.css
-│   │   ├── components.css
-│   │   ├── charts.css
-│   │   └── motion.css
-│   └── js/
-│       ├── app.js
-│       ├── data/
-│       │   ├── load.js
-│       │   ├── tabs.js
-│       │   ├── csv.js
-│       │   └── schema.js
-│       ├── intelligence/
-│       │   ├── intent.js
-│       │   ├── suggest.js
-│       │   └── explain.js
-│       ├── charts/
-│       │   ├── decide.js
-│       │   ├── transform.js
-│       │   └── render.js
-│       ├── ui/
-│       │   ├── input.js
-│       │   ├── tabs.js
-│       │   ├── query.js
-│       │   └── dashboard.js
-│       └── utils/
-│           ├── debounce.js
-│           └── helpers.js
-
-```
----
-
-## Technology Stack
-
-HTML, CSS, and Vanilla JavaScript
-
-Chart.js for data visualization
-
-Client side CSV and Google Sheets parsing
-
-GitHub Pages compatible deployment
-
-No backend is required for the core functionality.
+ES modules are required.
 
 ---
 
-## Design Principles
+## Limitations
 
-Minimal interface focused on content
-
-Monochrome visual language
-
-Stable charts with subtle transitions
-
-Clear hierarchy and spacing
-
-Predictable behavior over complex features
-
-The goal is to feel like a professional analytics product rather than a demonstration.
-
----
-## Intended Users
-
-Non technical users
-
-Students and beginners
-
-Managers and founders
-
-Operations and sales teams
-
-Anyone needing fast insights from spreadsheet data
-
-If a user can describe what they want in a sentence, they can use this tool.
+- Client-side only (large CSVs may impact performance)
+- No persistent storage
+- No authentication or multi-user support
 
 ---
 
-## Future Enhancements
-
-AI assisted intent parsing
-
-Export charts as images
-
-Shareable dashboards
-
-Date range and category filters
-
-Private sheet access with authentication
-
----
 ## License
 
-This project is open source and intended for learning, experimentation, and practical use.
+This project is provided as-is for educational and internal use.
