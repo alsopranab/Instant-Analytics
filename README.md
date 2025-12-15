@@ -1,12 +1,56 @@
 # Instant Analytics
 
-A lightweight, client-side analytics dashboard that lets you upload CSV files or paste public Google Sheets links and ask natural-language questions to generate insights instantly — no backend required.
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)](https://alsopranab.github.io/Instant-Analytics/)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES%20Modules-yellow)
+![Status](https://img.shields.io/badge/Status-Stable-blue)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
+Instant Analytics is a lightweight, client-side analytics dashboard that allows users to upload CSV files or connect public Google Sheets and ask natural-language questions to generate charts and insights instantly — with **no backend required**.
 
 ---
 
 ## Live Demo
 
-*(Add your GitHub Pages URL here once deployed)*
+```
+https://alsopranab.github.io/Instant-Analytics/
+```
+---
+
+## What This Project Does
+
+Instant Analytics lets you:
+
+- Load data from CSV files or public Google Sheets  
+- Ask questions like “total revenue by region”  
+- Automatically detect metrics and dimensions  
+- Generate charts instantly in the browser  
+- Receive explanations and suggestions for each query  
+
+Everything runs **entirely on the frontend** using modern JavaScript.
+
+---
+
+## Why This Project Exists
+
+Most analytics tools are heavy, backend-driven, and opaque.
+
+This project demonstrates that:
+- Analytics can be done fully in the browser
+- Rule-based intelligence can be explainable and predictable
+- Clean architecture matters more than “AI buzzwords”
+- A modular frontend can handle real analytical workflows
+
+---
+
+## Features
+
+- CSV upload support  
+- Public Google Sheets integration  
+- Natural-language query parsing  
+- Automatic schema inference  
+- Intelligent chart selection (bar, line, table)  
+- Clear result explanations  
+- Query refinement suggestions  
 
 ---
 
@@ -48,87 +92,42 @@ Instant-Analytics/
             ├── schema.js
             └── tabs.js
 ```
-## Features
-
-> Upload CSV or paste a public Google Sheets link
-
-> Natural-language queries (e.g., total revenue by category)
-
-> Automatic schema inference
-
-> Intelligent chart selection
-
-> Explanations and suggestions per query
-
 ## Demo: Try It Yourself
 
-You can test Instant Analytics in under 2 minutes using either a CSV file or a public Google Sheet.
+You can test Instant Analytics in under two minutes using either a public Google Sheet or a CSV file.
 
 ---
 
-### Option 1: Use a Sample Google Sheet (Recommended)
+### Option 1: Google Sheets (Recommended)
 
-1. Open this public Google Sheet (copy it or create your own using the data below):
-Link: 
+Sample Google Sheet:
 ```
 https://docs.google.com/spreadsheets/d/1Iw1DKurGcWc_LMpTnkVBmDhmx8UWc_-cS404DGuZ3y0/edit?gid=0#gid=0
 ```
-## Screenshots & Demo
+How to use:
 
-### 1. Data Input (CSV / Google Sheets)
-Upload a CSV file or paste a public Google Sheets link to load data instantly.
-
-> _Supports automatic schema detection and multiple data sources._
-
-![Data Input](docs/screenshots/data-input.png)
-
----
-
-### 2. Natural Language Query
-Ask questions like:
-- `total revenue by region`
-- `average revenue by product`
-- `count by category`
-
-The system automatically interprets intent and selects the best visualization.
-
-![Query Input](docs/screenshots/query-input.png)
+- Open the Google Sheet
+- Click **Share**
+- Set **Anyone with the link → Viewer**
+- Copy the sheet URL
+- Paste the URL into the **Google Sheet input**
+- Press **Enter**
 
 ---
 
-### 3. Instant Charts & Insights
-Charts are generated instantly along with:
-- A clear explanation of the result
-- Intelligent suggestions to refine analysis
+### Option 2: CSV Upload
 
-![Analytics Output](docs/screenshots/analytics-output.png)
+How to use:
 
----
-
-### Optional: Short Demo GIF
-A short walkthrough showing data upload → query → chart rendering.
-
-![Demo GIF](docs/screenshots/demo.gif)
-
-
-2. Make the sheet **Public (Viewer access)**  
-3. Copy the Google Sheets URL  
-4. Paste it into the **Google Sheet input**  
-5. Press **Enter**
+- Create a CSV file using the same data
+- Click **Upload CSV**
+- Select the CSV file from your system
 
 ---
 
-### Option 2: Upload CSV
+### Example Queries
 
-1. Save the data above as `sales_demo.csv`
-2. Click **Upload CSV**
-3. Select the file
-
----
-
-### Example Queries to Try
-
-Type any of these in the query box and press **Enter**:
+Try any of the following natural-language queries:
 
 - `total revenue by region`
 - `average revenue by product`
@@ -138,91 +137,11 @@ Type any of these in the query box and press **Enter**:
 
 ---
 
-### What You Should See
+### Expected Output
 
-- A chart rendered instantly
-- Automatic chart type selection (bar / line / table)
-- A clear explanation of the result
-- Intelligent suggestions to refine the query
+After submitting a query, the application will:
 
-If this works, the entire analytics pipeline is functioning correctly.
-
-# Instant Analytics
-
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)](https://alsopranab.github.io/Instant-Analytics/)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES%20Modules-yellow)
-![Status](https://img.shields.io/badge/Status-Stable-blue)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
-
-
-## How to Run Locally
-
-This app uses ES modules, so it needs to be served over HTTP.
-
-## Using Python
-```cd Instant-Analytics
-python3 -m http.server 5500
-```
-
-## Then open:
-
-```
-http://localhost:5500
-```
-## Using VS Code
-
-```
-> Install the Live Server extension
-
-> Right-click index.html → Open with Live Server
-```
-## Google Sheets Usage
-
-> Make the sheet public (Viewer access)
-
-> Paste the full sheet URL in the input
-
-> Press *Enter*
-
-> Ask your *analytics question*
-
-## Supported Queries
-
-```Examples:
-
-total revenue by region
-
-average sales by product
-
-count by category
-
-show units_sold by product
-```
-## License
-
-This repository contains code you can use for learning or internal projects.
-
-
----
-
-## After you paste this
-
-Once you replace your `README.md` with that:
-
-1. **Commit and push**
-2. GitHub should render it correctly
-3. The structure will be clear
-4. The repo will look professional
-
----
-
-## Next steps (optional but recommended)
-
-If you want, I can:
-- Add a **GitHub Pages live URL section**
-- Write a **feature demo GIF** snippet to embed
-- Add **badges** (build, license, GitHub Pages)
-
-Tell me one.
-::contentReference[oaicite:1]{index=1}
-
+- Render a chart instantly
+- Automatically choose an appropriate chart type
+- Display a clear explanation of the result
+- Suggest ways to refine the analysis
