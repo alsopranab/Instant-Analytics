@@ -1,32 +1,41 @@
 /* =========================================
    Query Intent Parsing Intelligence (FINAL)
+   Robust, Underscore-Safe, Human-Friendly
 ========================================= */
 
-/**
- * Detect aggregation intent from query
- */
+/* -----------------------------------------
+   Text Normalization
+----------------------------------------- */
+function normalize(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/[_\s]+/g, "");
+}
+
+/* -----------------------------------------
+   Detect aggregation intent
+----------------------------------------- */
 function detectAggregation(query) {
   const q = query.toLowerCase();
 
   if (/\b(avg|average|mean)\b/.test(q)) return "avg";
   if (/\b(count|number of|how many)\b/.test(q)) return "count";
   if (/\b(sum|total|overall)\b/.test(q)) return "sum";
-
-  if (/\b(most|highest|top|maximum|max)\b/.test(q)) return "count";
+  if (/\b(most|highest|top|max|maximum)\b/.test(q)) return "count";
 
   return null;
 }
 
-/**
- * Detect explicit dimension phrase
- */
+/* -----------------------------------------
+   Detect explicit dimension phrase
+----------------------------------------- */
 function detectExplicitDimension(query) {
   const q = query.toLowerCase();
 
   const patterns = [
-    /\bby\s+([\w\s]+)/,
-    /\bper\s+([\w\s]+)/,
-    /\bgrouped\s+by\s+([\w\s]+)/
+    /\bby\s+([\w\s_]+)/,
+    /\bper\s+([\w\s_]+)/,
+    /\bgrouped\s+by\s+([\w\s_]+)/
   ];
 
   for (const regex of patterns) {
@@ -37,32 +46,40 @@ function detectExplicitDimension(query) {
   return null;
 }
 
-/**
- * Match schema field against query text
- */
+/* -----------------------------------------
+   Match schema field against query text
+   (underscore & space safe)
+----------------------------------------- */
 function matchSchemaField(query, schema, typeFilter = null) {
-  const q = query.toLowerCase();
+  const q = normalize(query);
 
   for (const field in schema) {
     if (typeFilter && schema[field].type !== typeFilter) continue;
-    if (q.includes(field.toLowerCase())) return field;
+
+    const normalizedField = normalize(field);
+    if (q.includes(normalizedField)) {
+      return field;
+    }
   }
 
   return null;
 }
 
-/**
- * Pick best fallback dimension
- */
+/* -----------------------------------------
+   Pick fallback dimension (string column)
+----------------------------------------- */
 function fallbackDimension(schema, metric) {
-  return Object.keys(schema).find(
-    (key) => schema[key].type === "string" && key !== metric
-  );
+  for (const key in schema) {
+    if (schema[key].type === "string" && key !== metric) {
+      return key;
+    }
+  }
+  return null;
 }
 
-/**
- * Parse query into structured intent
- */
+/* -----------------------------------------
+   Parse query into structured intent
+----------------------------------------- */
 export function parseQuery(query, schema) {
   if (!query || typeof query !== "string" || !schema) {
     return {
@@ -74,28 +91,34 @@ export function parseQuery(query, schema) {
     };
   }
 
-  // 1️⃣ Aggregation
+  /* 1️⃣ Aggregation */
   let aggregation = detectAggregation(query);
 
-  // 2️⃣ Metric (numeric preferred)
+  /* 2️⃣ Metric (numeric field) */
   const metric = matchSchemaField(query, schema, "number");
 
-  // 3️⃣ Dimension (explicit → schema match → fallback)
+  /* 3️⃣ Dimension (explicit → fallback) */
   const explicitPhrase = detectExplicitDimension(query);
-  const explicitDimension =
-    explicitPhrase
-      ? matchSchemaField(explicitPhrase, schema, "string")
-      : null;
 
-  const dimension =
-    explicitDimension || fallbackDimension(schema, metric);
+  let dimension = null;
+  if (explicitPhrase) {
+    dimension = matchSchemaField(
+      explicitPhrase,
+      schema,
+      "string"
+    );
+  }
 
-  // 4️⃣ Defaults
+  if (!dimension) {
+    dimension = fallbackDimension(schema, metric);
+  }
+
+  /* 4️⃣ Defaults */
   if (!aggregation) {
     aggregation = metric ? "sum" : "count";
   }
 
-  // 5️⃣ Confidence
+  /* 5️⃣ Confidence */
   let confidence = "high";
   if (!dimension || !metric) confidence = "medium";
   if (!dimension && !metric) confidence = "low";
