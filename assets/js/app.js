@@ -11,6 +11,7 @@ import { updateDataAwareness } from "./ui/dataAwareness.js";
 
 /* ---------- Toggles ---------- */
 import { initToggle } from "./ui/toggles.js";
+import { initThemeToggle } from "./ui/themeToggle.js";
 
 /* ---------- UI ---------- */
 import { initInput } from "./ui/input.js";
@@ -67,7 +68,7 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
       $("emptyState").style.display = "none";
     });
 
-    // default table
+    // Default table
     state.activeTable = tableNames[0];
     setActiveTab(state.activeTable);
 
@@ -84,7 +85,7 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
 }
 
 /* -----------------------------------------
-   Query Execution (FIXED)
+   Query Execution
 ----------------------------------------- */
 function executeQuery(queryText) {
   if (!queryText || !state.activeTable) return;
@@ -127,7 +128,10 @@ function init() {
   initInput();
   initQuery(executeQuery);
 
-  // 🔹 Toggle wiring (THIS WAS MISSING)
+  /* Theme Toggle */
+  initThemeToggle("themeToggle");
+
+  /* Section Toggles */
   initToggle("overviewHeader", "dataOverview");
   initToggle("kpisHeader", "dataKpis");
   initToggle("previewHeader", "dataPreview");
