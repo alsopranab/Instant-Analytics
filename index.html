@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <!-- REQUIRED for GitHub Pages -->
-  <base href="/Instant-Analytics/">
+  <base href="/Instant-Analytics/" />
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,99 +10,95 @@
 
   <!-- Design Tokens -->
   <link rel="stylesheet" href="./assets/css/tokens.css" />
-
-  <!-- Base + Layout -->
   <link rel="stylesheet" href="./assets/css/base.css" />
-
-  <!-- UI Components -->
   <link rel="stylesheet" href="./assets/css/components.css" />
-
-  <!-- Charts -->
   <link rel="stylesheet" href="./assets/css/charts.css" />
-
-  <!-- Motion -->
   <link rel="stylesheet" href="./assets/css/motion.css" />
 </head>
 
 <body>
-
-  <!-- App Shell -->
   <div id="app">
 
-    <!-- Header -->
+    <!-- ===============================
+         HEADER
+    =============================== -->
     <header class="app-header">
       <h1 class="app-title">Instant Analytics</h1>
       <p class="app-subtitle">Ask questions. Get insights. Instantly.</p>
     </header>
 
-    <!-- Controls -->
+    <!-- ===============================
+         CONTROLS
+    =============================== -->
     <section class="controls">
-
-      <!-- Google Sheet Input -->
       <div class="control-group">
-        <label for="sheetInput" class="control-label">
-          Google Sheet (public)
-        </label>
+        <label for="sheetInput">Google Sheet (public)</label>
         <input
           type="text"
           id="sheetInput"
           class="control-input"
           placeholder="https://docs.google.com/spreadsheets/..."
-          autocomplete="off"
         />
       </div>
 
-      <!-- CSV Upload -->
       <div class="control-group">
-        <label for="csvInput" class="control-label">Upload CSV</label>
-        <input
-          type="file"
-          id="csvInput"
-          class="control-input"
-          accept=".csv"
-        />
+        <label for="csvInput">Upload CSV</label>
+        <input type="file" id="csvInput" class="control-input" accept=".csv" />
       </div>
 
-      <!-- Query Input -->
       <div class="control-group query-group">
-        <label for="queryInput" class="control-label">Ask a question</label>
+        <label for="queryInput">Ask a question</label>
         <input
           type="text"
           id="queryInput"
           class="control-input"
-          placeholder="e.g. Show total sales by month"
-          autocomplete="off"
+          placeholder="e.g. total revenue by region"
         />
       </div>
-
     </section>
 
-    <!-- Tabs -->
-    <nav class="tabs" id="dataTabs" aria-label="Data tables">
-      <!-- Tabs injected dynamically -->
-    </nav>
+    <!-- ===============================
+         TABLE TABS
+    =============================== -->
+    <nav class="tabs" id="dataTabs" aria-label="Data tables"></nav>
 
     <!-- ===============================
-         DATA AWARENESS (ALWAYS VISIBLE)
-         =============================== -->
-
-    <section id="dataOverview"></section>
-
-    <section id="dataKpis"></section>
-
-    <section id="dataPreview"></section>
-
-    <section id="suggestedQueries"></section>
-
-    <!-- ===============================
-         ANALYTICS OUTPUT
-         =============================== -->
-
+         DASHBOARD (TOP PRIORITY)
+    =============================== -->
     <main class="dashboard" id="dashboard">
-      <!-- Charts, explanations injected dynamically -->
+      <!-- chart + explanation injected -->
     </main>
 
-    <!-- Empty State -->
+    <!-- ===============================
+         SUGGESTED QUERIES (TOGGLE)
+    =============================== -->
+    <section class="panel toggle-panel">
+      <header class="panel-header">
+        <h3>Suggested Questions</h3>
+        <span class="chevron">⌄</span>
+      </header>
+      <div id="suggestedQueries" class="panel-body"></div>
+    </section>
+
+    <!-- ===============================
+         DATA AWARENESS (TOGGLE)
+    =============================== -->
+    <section class="panel toggle-panel collapsed">
+      <header class="panel-header">
+        <h3>Dataset Information</h3>
+        <span class="chevron">⌄</span>
+      </header>
+
+      <div class="panel-body">
+        <section id="dataOverview"></section>
+        <section id="dataKpis"></section>
+        <section id="dataPreview"></section>
+      </div>
+    </section>
+
+    <!-- ===============================
+         EMPTY STATE
+    =============================== -->
     <section class="empty-state" id="emptyState">
       <p>Upload a CSV file or paste a Google Sheet link to begin analysis.</p>
     </section>
@@ -111,6 +107,5 @@
 
   <!-- App Entry -->
   <script type="module" src="./assets/js/app.js"></script>
-
 </body>
 </html>
