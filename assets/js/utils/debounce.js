@@ -10,15 +10,13 @@
 export function debounce(fn, delay = 300) {
   let timerId = null;
 
-  return function (...args) {
-    const context = this;
-
+  return (...args) => {
     if (timerId) {
       clearTimeout(timerId);
     }
 
     timerId = setTimeout(() => {
-      fn.apply(context, args);
+      fn(...args);
     }, delay);
   };
 }
