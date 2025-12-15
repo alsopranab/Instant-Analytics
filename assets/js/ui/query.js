@@ -1,5 +1,5 @@
 /* =========================================
-   Query Input Handling (FINAL – FIXED)
+   Query Input Handling (FINAL – CLEAN)
 ========================================= */
 
 /**
@@ -22,12 +22,12 @@ export function initQuery(onQueryExecute) {
 
   queryInput.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
-    event.preventDefault();        // 🔥 REQUIRED
+    event.preventDefault();
     if (event.repeat) return;
 
     execute();
   });
 
-  /* 🔥 Expose programmatic execution safely */
-  queryInput.executeQuery = execute;
+  /* 🔥 Safe programmatic execution */
+  queryInput.addEventListener("execute-query", execute);
 }
