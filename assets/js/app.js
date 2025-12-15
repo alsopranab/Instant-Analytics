@@ -89,10 +89,19 @@ function executeQuery(queryText) {
   const chartType = decideChart(intent);
   const transformed = transformData(data, intent);
 
-  renderChart({
-    chartType,
-    data: transformed
-  });
+renderChart({
+  chartType,
+  data: transformed.data,
+  title: "Result",
+  xLabel: intent.dimension,
+  yLabel: intent.aggregation.toUpperCase()
+});
+
+updateDashboard({
+  explanation: explainResult(intent, chartType, transformed.meta),
+  suggestion
+});
+
 
   updateDashboard({
     explanation: explainResult(intent, chartType),
