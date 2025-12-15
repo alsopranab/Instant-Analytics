@@ -1,5 +1,5 @@
 /* =========================================
-   Chart Rendering Engine (PRO MAX)
+   Chart Rendering Engine (FINAL – FIXED)
 ========================================= */
 
 /* -----------------------------------------
@@ -13,14 +13,13 @@ function clearChart() {
   const dashboard = getDashboard();
   if (!dashboard) return;
 
-  const chart = dashboard.querySelector(".chart-container");
-  if (chart) chart.remove();
+  dashboard.querySelectorAll(".chart-container").forEach(el => el.remove());
 }
 
 function createContainer() {
-  const div = document.createElement("div");
-  div.className = "chart-container";
-  return div;
+  const wrapper = document.createElement("div");
+  wrapper.className = "chart-container";
+  return wrapper;
 }
 
 function formatNumber(value) {
@@ -31,9 +30,12 @@ function formatNumber(value) {
 }
 
 /* -----------------------------------------
-   Header (Title + Axis Info)
+   Header (Title + Meta)
 ----------------------------------------- */
-function renderHeader(container, title, xLabel, yLabel) {
+function renderHeader(parent, title, xLabel, yLabel) {
+  const header = document.createElement("div");
+  header.className = "chart-header";
+
   const h3 = document.createElement("h3");
   h3.className = "chart-title";
   h3.textContent = title;
@@ -42,15 +44,16 @@ function renderHeader(container, title, xLabel, yLabel) {
   meta.className = "chart-axis-info";
   meta.textContent = `${yLabel} by ${xLabel}`;
 
-  container.appendChild(h3);
-  container.appendChild(meta);
+  header.appendChild(h3);
+  header.appendChild(meta);
+  parent.appendChild(header);
 }
 
 /* -----------------------------------------
-   Color System
+   Color Palette
 ----------------------------------------- */
-const COLOR_PALETTE = [
-  "#4f46e5",
+const COLORS = [
+  "#6366f1",
   "#22c55e",
   "#f59e0b",
   "#ef4444",
@@ -62,7 +65,7 @@ const COLOR_PALETTE = [
 /* -----------------------------------------
    Legend
 ----------------------------------------- */
-function renderLegend(container, data) {
+function renderLegend(parent, data) {
   const legend = document.createElement("div");
   legend.className = "chart-legend";
 
@@ -72,8 +75,7 @@ function renderLegend(container, data) {
 
     const swatch = document.createElement("span");
     swatch.className = "legend-swatch";
-    swatch.style.backgroundColor =
-      COLOR_PALETTE[i % COLOR_PALETTE.length];
+    swatch.style.backgroundColor = COLORS[i % COLORS.length];
 
     const label = document.createElement("span");
     label.textContent = d.label;
@@ -83,58 +85,58 @@ function renderLegend(container, data) {
     legend.appendChild(item);
   });
 
-  container.appendChild(legend);
+  parent.appendChild(legend);
+}
+
+/* -----------------------------------------
+   SVG BASE
+----------------------------------------- */
+function createSVG(container) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.classList.add("chart-svg");
+  svg.setAttribute("viewBox", "0 0 1000 360");
+  svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  container.appendChild(svg);
+  return svg;
 }
 
 /* -----------------------------------------
    BAR CHART
 ----------------------------------------- */
 function renderBarChart(container, data) {
-  const width = container.clientWidth || 700;
-  const height = 320;
-  const padding = 48;
+  const svg = createSVG(container);
+
+  const padding = 60;
+  const chartWidth = 1000 - padding * 2;
+  const chartHeight = 360 - padding * 2;
 
   const maxValue = Math.max(...data.map(d => d.value), 1);
-  const barWidth = (width - padding * 2) / data.length;
-
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("class", "chart-svg");
-  svg.setAttribute("width", width);
-  svg.setAttribute("height", height);
+  const barWidth = chartWidth / data.length;
 
   data.forEach((d, i) => {
-    const barHeight =
-      (d.value / maxValue) * (height - padding * 2);
-    const color = COLOR_PALETTE[i % COLOR_PALETTE.length];
+    const height = (d.value / maxValue) * chartHeight;
+    const x = padding + i * barWidth;
+    const y = padding + (chartHeight - height);
 
-    // Bar
     const rect = document.createElementNS(svg.namespaceURI, "rect");
-    rect.setAttribute("x", padding + i * barWidth);
-    rect.setAttribute("y", height - padding - barHeight);
-    rect.setAttribute("width", barWidth * 0.65);
-    rect.setAttribute("height", barHeight);
-    rect.setAttribute("fill", color);
+    rect.setAttribute("x", x + barWidth * 0.15);
+    rect.setAttribute("y", y);
+    rect.setAttribute("width", barWidth * 0.7);
+    rect.setAttribute("height", height);
     rect.setAttribute("rx", 6);
+    rect.setAttribute("fill", COLORS[i % COLORS.length]);
 
-    // Value label
-    const valueText = document.createElementNS(svg.namespaceURI, "text");
-    valueText.setAttribute(
-      "x",
-      padding + i * barWidth + barWidth * 0.325
-    );
-    valueText.setAttribute(
-      "y",
-      height - padding - barHeight - 8
-    );
-    valueText.setAttribute("text-anchor", "middle");
-    valueText.setAttribute("class", "chart-label");
-    valueText.textContent = formatNumber(d.value);
+    const label = document.createElementNS(svg.namespaceURI, "text");
+    label.setAttribute("x", x + barWidth / 2);
+    label.setAttribute("y", y - 8);
+    label.setAttribute("text-anchor", "middle");
+    label.setAttribute("class", "chart-label");
+    label.textContent = formatNumber(d.value);
 
     svg.appendChild(rect);
-    svg.appendChild(valueText);
+    svg.appendChild(label);
   });
 
-  container.appendChild(svg);
   renderLegend(container, data);
 }
 
@@ -144,66 +146,59 @@ function renderBarChart(container, data) {
 function renderLineChart(container, data) {
   if (data.length < 2) return;
 
-  const width = container.clientWidth || 700;
-  const height = 320;
-  const padding = 48;
+  const svg = createSVG(container);
+
+  const padding = 60;
+  const chartWidth = 1000 - padding * 2;
+  const chartHeight = 360 - padding * 2;
 
   const maxValue = Math.max(...data.map(d => d.value), 1);
-  const stepX = (width - padding * 2) / (data.length - 1);
+  const stepX = chartWidth / (data.length - 1);
 
   const points = data.map((d, i) => {
     const x = padding + i * stepX;
     const y =
-      height - padding -
-      (d.value / maxValue) * (height - padding * 2);
+      padding + chartHeight -
+      (d.value / maxValue) * chartHeight;
     return `${x},${y}`;
   });
-
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("class", "chart-svg");
-  svg.setAttribute("width", width);
-  svg.setAttribute("height", height);
 
   const polyline = document.createElementNS(svg.namespaceURI, "polyline");
   polyline.setAttribute("points", points.join(" "));
   polyline.setAttribute("class", "chart-line");
 
   svg.appendChild(polyline);
-  container.appendChild(svg);
+
+  renderLegend(container, data);
 }
 
 /* -----------------------------------------
-   TABLE (ALWAYS WORKS)
+   TABLE (Fallback)
 ----------------------------------------- */
 function renderTable(container, data) {
   const table = document.createElement("table");
-  table.className = "chart-table";
 
   const thead = document.createElement("thead");
-  const trHead = document.createElement("tr");
-
-  ["Category", "Value"].forEach(text => {
+  const trh = document.createElement("tr");
+  ["Category", "Value"].forEach(t => {
     const th = document.createElement("th");
-    th.textContent = text;
-    trHead.appendChild(th);
+    th.textContent = t;
+    trh.appendChild(th);
   });
-
-  thead.appendChild(trHead);
+  thead.appendChild(trh);
   table.appendChild(thead);
 
   const tbody = document.createElement("tbody");
-
-  data.forEach(row => {
+  data.forEach(d => {
     const tr = document.createElement("tr");
+    const td1 = document.createElement("td");
+    const td2 = document.createElement("td");
 
-    const tdLabel = document.createElement("td");
-    tdLabel.textContent = row.label;
+    td1.textContent = d.label;
+    td2.textContent = formatNumber(d.value);
 
-    const tdValue = document.createElement("td");
-    tdValue.textContent = formatNumber(row.value);
-
-    tr.appendChild(tdLabel);
-    tr.appendChild(tdValue);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
     tbody.appendChild(tr);
   });
 
@@ -226,11 +221,11 @@ export function renderChart({
 
   clearChart();
 
-  if (!Array.isArray(data) || data.length === 0) {
+  if (!Array.isArray(data) || !data.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.textContent = "No data available for this query.";
-    dashboard.prepend(empty);
+    empty.textContent = "No data available.";
+    dashboard.appendChild(empty);
     return;
   }
 
@@ -245,5 +240,5 @@ export function renderChart({
     renderTable(container, data);
   }
 
-  dashboard.prepend(container);
+  dashboard.appendChild(container);
 }
