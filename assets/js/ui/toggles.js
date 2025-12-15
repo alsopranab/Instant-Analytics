@@ -1,37 +1,24 @@
 /* =========================================
-   UI Toggle Utility (Animated, Reusable)
+   UI Toggle Utility (FINAL)
+   - CSS-driven animation
+   - No inline height hacks
+   - Matches current HTML structure
 ========================================= */
 
 /**
- * Initialize toggle behavior
- * @param {string} headerId - clickable header element id
- * @param {string} contentId - content container id
+ * Initialize all toggle panels
+ * Automatically wires:
+ * .toggle-panel > .panel-header
  */
-export function initToggle(headerId, contentId) {
-  const header = document.getElementById(headerId);
-  const content = document.getElementById(contentId);
+export function initToggles() {
+  const panels = document.querySelectorAll(".toggle-panel");
 
-  if (!header || !content) return;
+  panels.forEach((panel) => {
+    const header = panel.querySelector(".panel-header");
+    if (!header) return;
 
-  // initial state
-  content.style.overflow = "hidden";
-  content.style.transition = "max-height 0.35s ease, opacity 0.25s ease";
-  content.style.maxHeight = content.scrollHeight + "px";
-  content.style.opacity = "1";
-
-  header.addEventListener("click", () => {
-    const isCollapsed = content.dataset.collapsed === "true";
-
-    if (isCollapsed) {
-      content.style.maxHeight = content.scrollHeight + "px";
-      content.style.opacity = "1";
-      content.dataset.collapsed = "false";
-      header.classList.remove("collapsed");
-    } else {
-      content.style.maxHeight = "0px";
-      content.style.opacity = "0";
-      content.dataset.collapsed = "true";
-      header.classList.add("collapsed");
-    }
+    header.addEventListener("click", () => {
+      panel.classList.toggle("collapsed");
+    });
   });
 }
