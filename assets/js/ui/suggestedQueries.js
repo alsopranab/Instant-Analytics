@@ -47,7 +47,6 @@ function renderSuggestions(items) {
   if (!container) return;
 
   container.innerHTML = "";
-
   if (!items.length) return;
 
   const title = document.createElement("h3");
@@ -61,10 +60,17 @@ function renderSuggestions(items) {
 
     btn.addEventListener("click", () => {
       const input = document.getElementById("queryInput");
-      if (input) {
-        input.value = text;
-        input.dispatchEvent(new Event("change"));
-      }
+      if (!input) return;
+
+      input.value = text;
+
+      // 🔥 Trigger the same path as pressing Enter
+      input.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: "Enter",
+          bubbles: true
+        })
+      );
     });
 
     container.appendChild(btn);
