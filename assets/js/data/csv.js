@@ -1,5 +1,5 @@
 /* =========================================
-   CSV Parsing
+   CSV Parsing (FINAL)
    ========================================= */
 
 /**
@@ -8,17 +8,23 @@
 function normalizeHeader(header) {
   return header
     .trim()
+    .toLowerCase()
     .replace(/\s+/g, "_")
-    .replace(/[^\w]/g, "")
-    .toLowerCase();
+    .replace(/[^\w]/g, "");
 }
 
 /**
  * Parse CSV text into rows
  */
 export function parseCSV(text) {
-  const lines = text.trim().split(/\r?\n/);
-  if (lines.length === 0) return [];
+  if (typeof text !== "string") return [];
+
+  const lines = text
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+
+  if (lines.length < 2) return [];
 
   const rawHeaders = lines[0].split(",");
   const headers = rawHeaders.map(normalizeHeader);
@@ -30,8 +36,8 @@ export function parseCSV(text) {
     const row = {};
 
     headers.forEach((header, index) => {
-      const value = values[index] !== undefined ? values[index].trim() : "";
-      row[header] = value;
+      row[header] =
+        values[index] !== undefined ? values[index].trim() : "";
     });
 
     rows.push(row);
