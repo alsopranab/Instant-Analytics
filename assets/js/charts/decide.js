@@ -1,9 +1,9 @@
 /* =========================================
-   Chart Type Decision (FINAL)
-   ========================================= */
+   Chart Type Decision (FINAL – FIXED)
+========================================= */
 
 /**
- * Decide chart type based on intent
+ * Decide chart type based on parsed intent
  */
 export function decideChart(intent) {
   if (!intent || typeof intent !== "object") {
@@ -12,17 +12,30 @@ export function decideChart(intent) {
 
   const { metric, dimension, aggregation } = intent;
 
-  if (!metric || !dimension) {
+  // Missing structure → safest fallback
+  if (!dimension) {
     return "table";
   }
 
-  switch (aggregation) {
-    case "avg":
-      return "line";
-    case "count":
-      return "bar";
-    case "sum":
-    default:
-      return "bar";
+  // COUNT is always categorical → BAR
+  if (aggregation === "count") {
+    return "bar";
   }
+
+  // Numeric aggregations
+  if (metric) {
+    // Time-series heuristic
+    if (
+      typeof dimension === "string" &&
+      dimension.toLowerCase().includes("date")
+    ) {
+      return "line";
+    }
+
+    // Default numeric aggregation → BAR
+    return "bar";
+  }
+
+  // Absolute fallback
+  return "table";
 }
