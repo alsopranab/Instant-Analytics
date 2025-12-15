@@ -1,25 +1,45 @@
 /* =========================================
-   Chart Rendering Engine
+   Chart Rendering Engine (FINAL)
    ========================================= */
 
-const dashboard = document.getElementById("dashboard");
+/**
+ * Get dashboard element safely
+ */
+function getDashboard() {
+  return document.getElementById("dashboard");
+}
 
 /**
- * Clear dashboard
+ * Clear only chart content (not text)
  */
-function clearDashboard() {
-  dashboard.innerHTML = "";
+function clearChart() {
+  const dashboard = getDashboard();
+  if (!dashboard) return;
+
+  const existingChart = dashboard.querySelector(".chart-container");
+  if (existingChart) {
+    existingChart.remove();
+  }
+}
+
+/**
+ * Create chart container
+ */
+function createChartContainer() {
+  const container = document.createElement("div");
+  container.className = "chart-container";
+  return container;
 }
 
 /**
  * Render Bar Chart (SVG)
  */
-function renderBarChart(data) {
-  const width = dashboard.clientWidth;
+function renderBarChart(container, data) {
+  const width = container.clientWidth || 600;
   const height = 300;
   const padding = 40;
 
-  const maxValue = Math.max(...data.map(d => d.value));
+  const maxValue = Math.max(...data.map(d => d.value), 0) || 1;
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("class", "chart-svg");
@@ -41,18 +61,20 @@ function renderBarChart(data) {
     svg.appendChild(rect);
   });
 
-  dashboard.appendChild(svg);
+  container.appendChild(svg);
 }
 
 /**
  * Render Line Chart (SVG)
  */
-function renderLineChart(data) {
-  const width = dashboard.clientWidth;
+function renderLineChart(container, data) {
+  if (data.length < 2) return;
+
+  const width = container.clientWidth || 600;
   const height = 300;
   const padding = 40;
 
-  const maxValue = Math.max(...data.map(d => d.value));
+  const maxValue = Math.max(...data.map(d => d.value), 0) || 1;
   const stepX = (width - padding * 2) / (data.length - 1);
 
   const points = data.map((d, i) => {
@@ -72,13 +94,13 @@ function renderLineChart(data) {
   polyline.setAttribute("class", "chart-line");
 
   svg.appendChild(polyline);
-  dashboard.appendChild(svg);
+  container.appendChild(svg);
 }
 
 /**
  * Render Table
  */
-function renderTable(data) {
+function renderTable(container, data) {
   const table = document.createElement("table");
   table.style.width = "100%";
   table.style.borderCollapse = "collapse";
@@ -117,15 +139,29 @@ function renderTable(data) {
   });
 
   table.appendChild(tbody);
-  dashboard.appendChild(table);
+  container.appendChild(table);
 }
 
 /**
  * Public render function
  */
 export function renderChart({ chartType, data }) {
-  clearDashboard();
+  const dashboard = getDashboard();
+  if (!dashboard) return;
 
-  if (!data || data.length === 0) return;
+  clearChart();
 
-  if (chartType
+  if (!Array.isArray(data) || data.length === 0) return;
+
+  const container = createChartContainer();
+
+  if (chartType === "line") {
+    renderLineChart(container, data);
+  } else if (chartType === "bar") {
+    renderBarChart(container, data);
+  } else {
+    renderTable(container, data);
+  }
+
+  dashboard.prepend(container);
+}
