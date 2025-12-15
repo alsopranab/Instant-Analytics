@@ -1,5 +1,5 @@
 /* =========================================
-   Base Styles and Layout (Polished)
+   Base Styles and Layout (Advanced)
 ========================================= */
 
 /* -----------------------------------------
@@ -25,8 +25,9 @@ body {
   font-family: var(--font-sans);
   font-size: var(--font-size-md);
   line-height: var(--line-height-normal);
-  color: #111827; /* neutral-900 */
-  background-color: #f5f7fa; /* soft app background */
+  color: #111827;
+  background:
+    linear-gradient(180deg, #f5f7fa 0%, #eef2f7 100%);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -42,18 +43,23 @@ h6 {
   margin: 0;
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
-  color: #0f172a; /* slate-900 */
+  color: #0f172a;
+}
+
+h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
 }
 
 p {
   margin: 0;
-  color: #4b5563; /* gray-600 */
+  color: #4b5563;
 }
 
 label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: #374151; /* gray-700 */
+  color: #374151;
 }
 
 /* -----------------------------------------
@@ -74,17 +80,17 @@ label {
 .app-header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 4px;
 }
 
 .app-title {
   font-size: var(--font-size-2xl);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .app-subtitle {
   font-size: var(--font-size-sm);
-  color: #6b7280; /* gray-500 */
+  color: #6b7280;
 }
 
 /* -----------------------------------------
@@ -95,12 +101,14 @@ label {
   align-items: flex-end;
   gap: var(--space-6);
   flex-wrap: wrap;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .control-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 6px;
 }
 
 .query-group {
@@ -108,17 +116,38 @@ label {
 }
 
 /* -----------------------------------------
-   Dashboard (Card)
+   Data Awareness Layout
+----------------------------------------- */
+#dataOverview,
+#dataKpis,
+#dataPreview,
+#suggestedQueries {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.03);
+  animation: fadeUp 0.35s ease-out;
+}
+
+#dataOverview,
+#dataPreview {
+  overflow-x: auto;
+}
+
+/* -----------------------------------------
+   Dashboard (Analytics Output)
 ----------------------------------------- */
 .dashboard {
   min-height: 360px;
   background-color: #ffffff;
-  border-radius: 16px;
+  border-radius: 18px;
   padding: var(--space-6);
   box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.06),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-  animation: fadeUp 0.4s ease-out;
+    0 12px 32px rgba(0, 0, 0, 0.06),
+    0 3px 10px rgba(0, 0, 0, 0.05);
+  animation: fadeUp 0.45s ease-out;
 }
 
 /* -----------------------------------------
@@ -127,8 +156,47 @@ label {
 .empty-state {
   text-align: center;
   padding: var(--space-12);
-  color: #9ca3af; /* gray-400 */
+  color: #9ca3af;
   font-size: var(--font-size-sm);
+}
+
+/* -----------------------------------------
+   Tables (Global Defaults)
+----------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+td {
+  font-size: 13px;
+  color: #1f2937;
+}
+
+th,
+td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* -----------------------------------------
+   Focus & Accessibility
+----------------------------------------- */
+:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
 }
 
 /* -----------------------------------------
