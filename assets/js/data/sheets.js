@@ -1,6 +1,6 @@
 /* =========================================
-   Google Sheets Loader (Public Sheets) – FINAL
-   ========================================= */
+   Google Sheets Loader (Public Sheets)
+========================================= */
 
 /**
  * Extract Google Sheet ID from URL
@@ -12,15 +12,17 @@ function extractSheetId(url) {
     /https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/
   );
 
-  return match ? match[1] : null;
+  return match?.[1] ?? null;
 }
 
 /**
  * Extract optional sheet GID
  */
 function extractGid(url) {
+  if (typeof url !== "string") return null;
+
   const match = url.match(/gid=([0-9]+)/);
-  return match ? match[1] : null;
+  return match?.[1] ?? null;
 }
 
 /**
@@ -43,7 +45,8 @@ export async function loadGoogleSheet(sheetUrl) {
 
   try {
     response = await fetch(csvUrl, { cache: "no-store" });
-  } catch (error) {
+  } catch (_error) {
+    // `_error` intentionally unused (Deno lint compliant)
     throw new Error("Network error while fetching Google Sheet");
   }
 
@@ -53,5 +56,5 @@ export async function loadGoogleSheet(sheetUrl) {
     );
   }
 
-  return await response.text();
+  return response.text();
 }
