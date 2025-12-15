@@ -1,22 +1,26 @@
 /* =========================================
-   App Bootstrap & Orchestration (FINAL)
+   App Bootstrap & Orchestration (ADVANCED)
 ========================================= */
 
-/* ---------- Imports (ES Modules) ---------- */
+/* ---------- Data Loading ---------- */
 import { loadData } from "./data/load.js";
 import { createTabs, setActiveTab } from "./data/tabs.js";
 
+/* ---------- Persistent UI ---------- */
+import { updateDataOverview } from "./ui/dataOverview.js";
+import { initInput } from "./ui/input.js";
+import { initQuery } from "./ui/query.js";
+import { updateDashboard } from "./ui/dashboard.js";
+
+/* ---------- Intelligence ---------- */
 import { parseQuery } from "./intelligence/intent.js";
 import { suggestChart } from "./intelligence/suggest.js";
 import { explainResult } from "./intelligence/explain.js";
 
+/* ---------- Charts ---------- */
 import { decideChart } from "./charts/decide.js";
 import { transformData } from "./charts/transform.js";
 import { renderChart } from "./charts/render.js";
-
-import { initInput } from "./ui/input.js";
-import { initQuery } from "./ui/query.js";
-import { updateDashboard } from "./ui/dashboard.js";
 
 /* -----------------------------------------
    Global App State
@@ -59,12 +63,26 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
     createTabs(state.tables, (tableName) => {
       state.activeTable = tableName;
       setActiveTab(tableName);
+
+      // 🔹 Always update data overview on table change
+      updateDataOverview(
+        state.tables[tableName],
+        state.schema[tableName]
+      );
+
       const empty = $("emptyState");
       if (empty) empty.style.display = "none";
     });
 
+    // Default table
     state.activeTable = tableNames[0];
     setActiveTab(state.activeTable);
+
+    // 🔹 Initial data overview render
+    updateDataOverview(
+      state.tables[state.activeTable],
+      state.schema[state.activeTable]
+    );
 
     const empty = $("emptyState");
     if (empty) empty.style.display = "none";
@@ -75,36 +93,36 @@ async function handleDataLoad({ file = null, sheetUrl = null }) {
 }
 
 /* -----------------------------------------
-   Query Execution
+   Query Execution (SINGLE SOURCE OF TRUTH)
 ----------------------------------------- */
 function executeQuery(queryText) {
   if (!queryText || !state.activeTable) return;
 
   const data = state.tables[state.activeTable];
   const schema = state.schema[state.activeTable];
-
   if (!data || !schema) return;
 
+  // 1️⃣ Parse intent
   const intent = parseQuery(queryText, schema);
+
+  // 2️⃣ Decide visualization
   const chartType = decideChart(intent);
+
+  // 3️⃣ Transform data + metadata
   const transformed = transformData(data, intent);
 
-renderChart({
-  chartType,
-  data: transformed.data,
-  title: "Result",
-  xLabel: intent.dimension,
-  yLabel: intent.aggregation.toUpperCase()
-});
+  // 4️⃣ Render chart/table
+  renderChart({
+    chartType,
+    data: transformed.data,
+    title: "Result",
+    xLabel: intent.dimension,
+    yLabel: intent.aggregation.toUpperCase()
+  });
 
-updateDashboard({
-  explanation: explainResult(intent, chartType, transformed.meta),
-  suggestion
-});
-
-
+  // 5️⃣ Update explanation & suggestions (ONCE)
   updateDashboard({
-    explanation: explainResult(intent, chartType),
+    explanation: explainResult(intent, chartType, transformed.meta),
     suggestion: suggestChart(intent)
   });
 
@@ -112,7 +130,7 @@ updateDashboard({
 }
 
 /* -----------------------------------------
-   Initialization (FINAL)
+   Initialization
 ----------------------------------------- */
 const _init = () => {
   const csvInput = $("csvInput");
@@ -129,7 +147,7 @@ const _init = () => {
     });
   }
 
-  // Google Sheet loader (robust)
+  // Google Sheet input
   if (sheetInput) {
     const loadSheet = () => {
       const url = sheetInput.value.trim();
