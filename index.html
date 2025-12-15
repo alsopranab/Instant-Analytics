@@ -3,23 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Instant Analytics</title>
 
-  <meta
-    name="description"
-    content="Instant Analytics lets anyone visualize spreadsheet data using plain language."
-  />
+  <!-- Design Tokens -->
+  <link rel="stylesheet" href="assets/css/tokens.css" />
 
+  <!-- Base + Layout -->
   <link rel="stylesheet" href="assets/css/base.css" />
-</head>
 
+  <!-- UI Components -->
+  <link rel="stylesheet" href="assets/css/components.css" />
+
+  <!-- Charts -->
+  <link rel="stylesheet" href="assets/css/charts.css" />
+
+  <!-- Motion -->
+  <link rel="stylesheet" href="assets/css/motion.css" />
+</head>
 <body>
 
-  <main id="app">
-    <!-- App renders here -->
-  </main>
+  <!-- App Shell -->
+  <div id="app">
 
-  <script src="assets/js/app.js"></script>
+    <!-- Header -->
+    <header class="app-header">
+      <h1 class="app-title">Instant Analytics</h1>
+      <p class="app-subtitle">Ask questions. Get insights. Instantly.</p>
+    </header>
+
+    <!-- Controls -->
+    <section class="controls">
+
+      <!-- CSV Upload -->
+      <div class="control-group">
+        <label for="csvInput" class="control-label">Upload CSV</label>
+        <input
+          type="file"
+          id="csvInput"
+          class="control-input"
+          accept=".csv"
+        />
+      </div>
+
+      <!-- Query Input -->
+      <div class="control-group query-group">
+        <label for="queryInput" class="control-label">Ask a question</label>
+        <input
+          type="text"
+          id="queryInput"
+          class="control-input"
+          placeholder="e.g. Show total sales by month"
+          autocomplete="off"
+        />
+      </div>
+
+    </section>
+
+    <!-- Tabs -->
+    <nav class="tabs" id="dataTabs">
+      <!-- Tabs injected dynamically -->
+    </nav>
+
+    <!-- Dashboard -->
+    <main class="dashboard" id="dashboard">
+      <!-- Charts, explanations, suggestions injected dynamically -->
+    </main>
+
+    <!-- Empty State -->
+    <section class="empty-state" id="emptyState">
+      <p>Upload a CSV file to begin analysis.</p>
+    </section>
+
+  </div>
+
+  <!-- App Entry -->
+  <script type="module" src="assets/js/app.js"></script>
+
 </body>
 </html>
