@@ -1,0 +1,90 @@
+/* =========================================
+   Charts Styling
+   ========================================= */
+
+/* -----------------------------------------
+   Chart Container
+   ----------------------------------------- */
+.chart-container {
+  width: 100%;
+  min-height: 320px;
+  position: relative;
+}
+
+/* -----------------------------------------
+   SVG Charts
+   ----------------------------------------- */
+.chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* -----------------------------------------
+   Axes
+   ----------------------------------------- */
+.axis path,
+.axis line {
+  stroke: var(--color-gray-300);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  fill: var(--color-gray-600);
+  font-size: var(--font-size-xs);
+}
+
+/* -----------------------------------------
+   Data Labels
+   ----------------------------------------- */
+.chart-label {
+  font-size: var(--font-size-xs);
+  fill: var(--color-gray-700);
+}
+
+/* -----------------------------------------
+   Legends
+   ----------------------------------------- */
+.chart-legend {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* -----------------------------------------
+   Bars, Lines, Slices
+   ----------------------------------------- */
+.chart-bar {
+  fill: var(--color-primary);
+}
+
+.chart-line {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2;
+}
+
+.chart-point {
+  fill: var(--color-primary);
+}
+
+.chart-slice {
+  stroke: var(--color-white);
+  stroke-width: 1;
+}
