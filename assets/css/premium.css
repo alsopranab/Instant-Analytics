@@ -123,9 +123,8 @@ tbody tr:hover {
 }
 
 /* -----------------------------------------
-   Entry Animation (Subtle)
+   Entry Animation (SINGLE SOURCE OF TRUTH)
 ----------------------------------------- */
-.dashboard,
-.panel {
+.dashboard {
   animation: fadeUp 0.35s ease both;
 }
