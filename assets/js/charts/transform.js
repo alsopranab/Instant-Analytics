@@ -1,18 +1,21 @@
 /* =========================================
-   Data Transformation for Charts (FINAL)
+   Data Transformation for Charts (FIXED)
 ========================================= */
 
 import { toNumber, isEmpty } from "../utils/helpers.js";
 
+/**
+ * Transform raw rows into chart-ready data
+ * RETURNS: Array<{ label, value }>
+ */
 export function transformData(rows, intent) {
   const { metric, dimension, aggregation } = intent;
 
   if (!Array.isArray(rows) || !dimension) {
-    return { data: [], meta: {} };
+    return [];
   }
 
   const grouped = Object.create(null);
-  let nonNullCount = 0;
 
   rows.forEach((row) => {
     const key = isEmpty(row[dimension]) ? "Unknown" : String(row[dimension]);
@@ -25,11 +28,10 @@ export function transformData(rows, intent) {
     if (value !== null) {
       grouped[key].sum += value;
       grouped[key].count += 1;
-      nonNullCount++;
     }
   });
 
-  const data = Object.entries(grouped).map(([label, stats]) => {
+  const result = Object.entries(grouped).map(([label, stats]) => {
     let value;
 
     switch (aggregation) {
@@ -50,12 +52,6 @@ export function transformData(rows, intent) {
     };
   });
 
-  return {
-    data: data.sort((a, b) => b.value - a.value),
-    meta: {
-      totalRows: rows.length,
-      nonNullCount,
-      groupCount: data.length
-    }
-  };
+  // Stable descending sort
+  return result.sort((a, b) => b.value - a.value);
 }
