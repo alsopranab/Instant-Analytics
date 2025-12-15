@@ -15,7 +15,7 @@ function detectAggregation(query) {
   // Ranking words imply COUNT for entity data
   if (/\b(most|highest|top|maximum|max)\b/.test(q)) return "count";
 
-  return null; // important: allow smart fallback later
+  return null; // allow smart fallback later
 }
 
 /**
@@ -79,17 +79,16 @@ export function parseQuery(query, schema) {
   let aggregation = detectAggregation(query);
 
   // Step 2: detect numeric metric first
-  let metric = matchSchemaField(query, schema, "number");
+  const metric = matchSchemaField(query, schema, "number");
 
   // Step 3: detect dimension
   const explicitDimension = detectExplicitDimension(query);
-  let dimension =
+  const dimension =
     (explicitDimension && schema[explicitDimension]
       ? explicitDimension
       : null) || fallbackDimension(schema, metric);
 
   // Step 4: intelligent defaults
-  // If no numeric metric → this is entity data → COUNT
   if (!metric) {
     aggregation = "count";
   }
