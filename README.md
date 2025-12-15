@@ -60,6 +60,65 @@ Instant-Analytics/
 
 > Explanations and suggestions per query
 
+## Demo: Try It Yourself
+
+You can test Instant Analytics in under 2 minutes using either a CSV file or a public Google Sheet.
+
+---
+
+### Option 1: Use a Sample Google Sheet (Recommended)
+
+1. Open this public Google Sheet (copy it or create your own using the data below):
+Link: 
+```
+https://docs.google.com/spreadsheets/d/1Iw1DKurGcWc_LMpTnkVBmDhmx8UWc_-cS404DGuZ3y0/edit?gid=0#gid=0
+```
+
+
+2. Make the sheet **Public (Viewer access)**  
+3. Copy the Google Sheets URL  
+4. Paste it into the **Google Sheet input**  
+5. Press **Enter**
+
+---
+
+### Option 2: Upload CSV
+
+1. Save the data above as `sales_demo.csv`
+2. Click **Upload CSV**
+3. Select the file
+
+---
+
+### Example Queries to Try
+
+Type any of these in the query box and press **Enter**:
+
+- `total revenue by region`
+- `average revenue by product`
+- `count by category`
+- `total units_sold by category`
+- `show sales`
+
+---
+
+### What You Should See
+
+- A chart rendered instantly
+- Automatic chart type selection (bar / line / table)
+- A clear explanation of the result
+- Intelligent suggestions to refine the query
+
+If this works, the entire analytics pipeline is functioning correctly.
+
+# Instant Analytics
+
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)](https://alsopranab.github.io/Instant-Analytics/)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES%20Modules-yellow)
+![Status](https://img.shields.io/badge/Status-Stable-blue)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
+
 ## How to Run Locally
 
 This app uses ES modules, so it needs to be served over HTTP.
@@ -106,3 +165,28 @@ show units_sold by product
 ## License
 
 This repository contains code you can use for learning or internal projects.
+
+
+---
+
+## After you paste this
+
+Once you replace your `README.md` with that:
+
+1. **Commit and push**
+2. GitHub should render it correctly
+3. The structure will be clear
+4. The repo will look professional
+
+---
+
+## Next steps (optional but recommended)
+
+If you want, I can:
+- Add a **GitHub Pages live URL section**
+- Write a **feature demo GIF** snippet to embed
+- Add **badges** (build, license, GitHub Pages)
+
+Tell me one.
+::contentReference[oaicite:1]{index=1}
+
