@@ -9,6 +9,9 @@ import { createTabs, setActiveTab } from "./data/tabs.js";
 /* ---------- Data Awareness ---------- */
 import { updateDataAwareness } from "./ui/dataAwareness.js";
 
+/* ---------- Toggles ---------- */
+import { initToggle } from "./ui/toggles.js";
+
 /* ---------- UI ---------- */
 import { initInput } from "./ui/input.js";
 import { initQuery } from "./ui/query.js";
@@ -16,13 +19,13 @@ import { updateDashboard } from "./ui/dashboard.js";
 
 /* ---------- Intelligence ---------- */
 import { parseQuery } from "./intelligence/intent.js";
-import { suggestChart as _suggestChart } from "./intelligence/suggest.js";
-import { explainResult as _explainResult } from "./intelligence/explain.js";
+import { suggestChart } from "./intelligence/suggest.js";
+import { explainResult } from "./intelligence/explain.js";
 
 /* ---------- Charts ---------- */
-import { decideChart as _decideChart } from "./charts/decide.js";
-import { transformData as _transformData } from "./charts/transform.js";
-import { renderChart as _renderChart } from "./charts/render.js";
+import { decideChart } from "./charts/decide.js";
+import { transformData } from "./charts/transform.js";
+import { renderChart } from "./charts/render.js";
 
 /* -----------------------------------------
    Global App State
@@ -36,27 +39,21 @@ const state = {
 /* -----------------------------------------
    DOM Helper
 ----------------------------------------- */
-function $(id) {
-  return document.getElementById(id);
-}
+const $ = (id) => document.getElementById(id);
 
 /* -----------------------------------------
    Data Load Handler
 ----------------------------------------- */
-async function _handleDataLoad({ file = null, sheetUrl = null }) {
+async function handleDataLoad({ file = null, sheetUrl = null }) {
   try {
     const result = await loadData({ file, sheetUrl });
-    if (!result || !result.tables) {
-      throw new Error("Invalid data format");
-    }
+    if (!result?.tables) throw new Error("Invalid data format");
 
     state.tables = result.tables;
     state.schema = result.schema || {};
 
     const tableNames = Object.keys(state.tables);
-    if (!tableNames.length) {
-      throw new Error("No tables found");
-    }
+    if (!tableNames.length) throw new Error("No tables found");
 
     createTabs(state.tables, (tableName) => {
       state.activeTable = tableName;
@@ -67,10 +64,10 @@ async function _handleDataLoad({ file = null, sheetUrl = null }) {
         schema: state.schema[tableName]
       });
 
-      const empty = $("emptyState");
-      if (empty) empty.style.display = "none";
+      $("emptyState").style.display = "none";
     });
 
+    // default table
     state.activeTable = tableNames[0];
     setActiveTab(state.activeTable);
 
@@ -79,8 +76,7 @@ async function _handleDataLoad({ file = null, sheetUrl = null }) {
       schema: state.schema[state.activeTable]
     });
 
-    const empty = $("emptyState");
-    if (empty) empty.style.display = "none";
+    $("emptyState").style.display = "none";
 
   } catch (err) {
     alert(err.message || "Failed to load data");
@@ -88,47 +84,54 @@ async function _handleDataLoad({ file = null, sheetUrl = null }) {
 }
 
 /* -----------------------------------------
-   Query Execution
+   Query Execution (FIXED)
 ----------------------------------------- */
-function _executeQuery(queryText) {
+function executeQuery(queryText) {
   if (!queryText || !state.activeTable) return;
 
-  const _data = state.tables[state.activeTable];
-  const _schema = state.schema[state.activeTable];
-  if (!_data || !_schema) return;
+  const rows = state.tables[state.activeTable];
+  const schema = state.schema[state.activeTable];
+  if (!rows || !schema) return;
 
-  const intent = parseQuery(queryText, _schema);
-  const chartType = _decideChart(intent);
-  const transformed = _transformData(_data, intent);
+  const intent = parseQuery(queryText, schema);
+  const chartType = decideChart(intent);
 
-  if (!Array.isArray(transformed) || transformed.length === 0) {
+  const { data, meta } = transformData(rows, intent);
+
+  if (!data.length) {
     updateDashboard({
-      explanation: "No data available for this query.",
-      suggestion: _suggestChart(intent)
+      explanation: "No results found for this query.",
+      suggestion: suggestChart(intent)
     });
     return;
   }
 
-  _renderChart({
+  renderChart({
     chartType,
-    data: transformed,
-    title: "Result",
+    data,
+    title: `${intent.aggregation.toUpperCase()} by ${intent.dimension}`,
     xLabel: intent.dimension,
     yLabel: intent.aggregation.toUpperCase()
   });
 
   updateDashboard({
-    explanation: _explainResult(intent, chartType),
-    suggestion: _suggestChart(intent)
+    explanation: explainResult(intent, chartType, meta),
+    suggestion: suggestChart(intent)
   });
 }
 
 /* -----------------------------------------
    Initialization
 ----------------------------------------- */
-const _init = () => {
+function init() {
   initInput();
-  initQuery(_executeQuery);
+  initQuery(executeQuery);
+
+  // 🔹 Toggle wiring (THIS WAS MISSING)
+  initToggle("overviewHeader", "dataOverview");
+  initToggle("kpisHeader", "dataKpis");
+  initToggle("previewHeader", "dataPreview");
+  initToggle("suggestHeader", "suggestedQueries");
 
   const csvInput = $("csvInput");
   const sheetInput = $("sheetInput");
@@ -136,14 +139,14 @@ const _init = () => {
   if (csvInput) {
     csvInput.addEventListener("change", (e) => {
       const file = e.target.files?.[0];
-      if (file) _handleDataLoad({ file });
+      if (file) handleDataLoad({ file });
     });
   }
 
   if (sheetInput) {
     const loadSheet = () => {
       const url = sheetInput.value.trim();
-      if (url) _handleDataLoad({ sheetUrl: url });
+      if (url) handleDataLoad({ sheetUrl: url });
     };
 
     sheetInput.addEventListener("keydown", (e) => {
@@ -153,15 +156,12 @@ const _init = () => {
       }
     });
 
-    sheetInput.addEventListener("paste", () => {
-      setTimeout(loadSheet, 0);
-    });
-
+    sheetInput.addEventListener("paste", () => setTimeout(loadSheet, 0));
     sheetInput.addEventListener("blur", loadSheet);
   }
-};
+}
 
 /* -----------------------------------------
    Boot
 ----------------------------------------- */
-document.addEventListener("DOMContentLoaded", _init);
+document.addEventListener("DOMContentLoaded", init);
