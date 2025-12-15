@@ -1,5 +1,5 @@
 /* =========================================
-   Chart Rendering Engine (FINAL – FIXED)
+   Chart Rendering Engine (FINAL – CLEAN)
 ========================================= */
 
 /* -----------------------------------------
@@ -30,9 +30,9 @@ function formatNumber(value) {
 }
 
 /* -----------------------------------------
-   Header (Title + Meta)
+   Header (TITLE ONLY – NO DUPLICATES)
 ----------------------------------------- */
-function renderHeader(parent, title, xLabel, yLabel) {
+function renderHeader(parent, title) {
   const header = document.createElement("div");
   header.className = "chart-header";
 
@@ -40,12 +40,7 @@ function renderHeader(parent, title, xLabel, yLabel) {
   h3.className = "chart-title";
   h3.textContent = title;
 
-  const meta = document.createElement("div");
-  meta.className = "chart-axis-info";
-  meta.textContent = `${yLabel} by ${xLabel}`;
-
   header.appendChild(h3);
-  header.appendChild(meta);
   parent.appendChild(header);
 }
 
@@ -63,7 +58,7 @@ const COLORS = [
 ];
 
 /* -----------------------------------------
-   Legend
+   Legend (BAR ONLY)
 ----------------------------------------- */
 function renderLegend(parent, data) {
   const legend = document.createElement("div");
@@ -107,41 +102,41 @@ function renderBarChart(container, data) {
   const svg = createSVG(container);
 
   const padding = 60;
-  const chartWidth = 1000 - padding * 2;
-  const chartHeight = 360 - padding * 2;
+  const width = 1000 - padding * 2;
+  const height = 360 - padding * 2;
 
   const maxValue = Math.max(...data.map(d => d.value), 1);
-  const barWidth = chartWidth / data.length;
+  const barWidth = width / data.length;
 
   data.forEach((d, i) => {
-    const height = (d.value / maxValue) * chartHeight;
+    const barHeight = (d.value / maxValue) * height;
     const x = padding + i * barWidth;
-    const y = padding + (chartHeight - height);
+    const y = padding + (height - barHeight);
 
     const rect = document.createElementNS(svg.namespaceURI, "rect");
     rect.setAttribute("x", x + barWidth * 0.15);
     rect.setAttribute("y", y);
     rect.setAttribute("width", barWidth * 0.7);
-    rect.setAttribute("height", height);
+    rect.setAttribute("height", barHeight);
     rect.setAttribute("rx", 6);
     rect.setAttribute("fill", COLORS[i % COLORS.length]);
 
-    const label = document.createElementNS(svg.namespaceURI, "text");
-    label.setAttribute("x", x + barWidth / 2);
-    label.setAttribute("y", y - 8);
-    label.setAttribute("text-anchor", "middle");
-    label.setAttribute("class", "chart-label");
-    label.textContent = formatNumber(d.value);
+    const value = document.createElementNS(svg.namespaceURI, "text");
+    value.setAttribute("x", x + barWidth / 2);
+    value.setAttribute("y", y - 8);
+    value.setAttribute("text-anchor", "middle");
+    value.setAttribute("class", "chart-label");
+    value.textContent = formatNumber(d.value);
 
     svg.appendChild(rect);
-    svg.appendChild(label);
+    svg.appendChild(value);
   });
 
   renderLegend(container, data);
 }
 
 /* -----------------------------------------
-   LINE CHART
+   LINE CHART (NO LEGEND)
 ----------------------------------------- */
 function renderLineChart(container, data) {
   if (data.length < 2) return;
@@ -149,17 +144,17 @@ function renderLineChart(container, data) {
   const svg = createSVG(container);
 
   const padding = 60;
-  const chartWidth = 1000 - padding * 2;
-  const chartHeight = 360 - padding * 2;
+  const width = 1000 - padding * 2;
+  const height = 360 - padding * 2;
 
   const maxValue = Math.max(...data.map(d => d.value), 1);
-  const stepX = chartWidth / (data.length - 1);
+  const stepX = width / (data.length - 1);
 
   const points = data.map((d, i) => {
     const x = padding + i * stepX;
     const y =
-      padding + chartHeight -
-      (d.value / maxValue) * chartHeight;
+      padding + height -
+      (d.value / maxValue) * height;
     return `${x},${y}`;
   });
 
@@ -168,29 +163,30 @@ function renderLineChart(container, data) {
   polyline.setAttribute("class", "chart-line");
 
   svg.appendChild(polyline);
-
-  renderLegend(container, data);
 }
 
 /* -----------------------------------------
-   TABLE (Fallback)
+   TABLE (FALLBACK)
 ----------------------------------------- */
 function renderTable(container, data) {
   const table = document.createElement("table");
 
   const thead = document.createElement("thead");
   const trh = document.createElement("tr");
-  ["Category", "Value"].forEach(t => {
+
+  ["Category", "Value"].forEach(text => {
     const th = document.createElement("th");
-    th.textContent = t;
+    th.textContent = text;
     trh.appendChild(th);
   });
+
   thead.appendChild(trh);
   table.appendChild(thead);
 
   const tbody = document.createElement("tbody");
   data.forEach(d => {
     const tr = document.createElement("tr");
+
     const td1 = document.createElement("td");
     const td2 = document.createElement("td");
 
@@ -212,9 +208,7 @@ function renderTable(container, data) {
 export function renderChart({
   chartType,
   data,
-  title = "Result",
-  xLabel = "Category",
-  yLabel = "Value"
+  title = "Result"
 }) {
   const dashboard = getDashboard();
   if (!dashboard) return;
@@ -230,7 +224,7 @@ export function renderChart({
   }
 
   const container = createContainer();
-  renderHeader(container, title, xLabel, yLabel);
+  renderHeader(container, title);
 
   if (chartType === "bar") {
     renderBarChart(container, data);
