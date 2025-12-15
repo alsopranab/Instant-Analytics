@@ -1,10 +1,10 @@
 /* =========================================
-   Base Styles and Layout
-   ========================================= */
+   Base Styles and Layout (Polished)
+========================================= */
 
 /* -----------------------------------------
    CSS Reset
-   ----------------------------------------- */
+----------------------------------------- */
 *,
 *::before,
 *::after {
@@ -18,17 +18,21 @@ body {
   height: 100%;
 }
 
+/* -----------------------------------------
+   Body & Background
+----------------------------------------- */
 body {
   font-family: var(--font-sans);
   font-size: var(--font-size-md);
   line-height: var(--line-height-normal);
-  color: var(--color-gray-800);
-  background-color: var(--color-gray-50);
+  color: #111827; /* neutral-900 */
+  background-color: #f5f7fa; /* soft app background */
+  -webkit-font-smoothing: antialiased;
 }
 
 /* -----------------------------------------
    Typography Defaults
-   ----------------------------------------- */
+----------------------------------------- */
 h1,
 h2,
 h3,
@@ -38,27 +42,27 @@ h6 {
   margin: 0;
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
-  color: var(--color-gray-900);
+  color: #0f172a; /* slate-900 */
 }
 
 p {
   margin: 0;
-  color: var(--color-gray-600);
+  color: #4b5563; /* gray-600 */
 }
 
 label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
+  color: #374151; /* gray-700 */
 }
 
 /* -----------------------------------------
    App Layout
-   ----------------------------------------- */
+----------------------------------------- */
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
+  padding: var(--space-10) var(--space-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
@@ -66,7 +70,7 @@ label {
 
 /* -----------------------------------------
    Header
-   ----------------------------------------- */
+----------------------------------------- */
 .app-header {
   display: flex;
   flex-direction: column;
@@ -75,16 +79,17 @@ label {
 
 .app-title {
   font-size: var(--font-size-2xl);
+  letter-spacing: -0.02em;
 }
 
 .app-subtitle {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: #6b7280; /* gray-500 */
 }
 
 /* -----------------------------------------
    Controls Section
-   ----------------------------------------- */
+----------------------------------------- */
 .controls {
   display: flex;
   align-items: flex-end;
@@ -103,22 +108,39 @@ label {
 }
 
 /* -----------------------------------------
-   Dashboard
-   ----------------------------------------- */
+   Dashboard (Card)
+----------------------------------------- */
 .dashboard {
   min-height: 360px;
-  background-color: var(--color-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  background-color: #ffffff;
+  border-radius: 16px;
   padding: var(--space-6);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  animation: fadeUp 0.4s ease-out;
 }
 
 /* -----------------------------------------
    Empty State
-   ----------------------------------------- */
+----------------------------------------- */
 .empty-state {
   text-align: center;
   padding: var(--space-12);
-  color: var(--color-gray-400);
+  color: #9ca3af; /* gray-400 */
   font-size: var(--font-size-sm);
+}
+
+/* -----------------------------------------
+   Subtle Animations
+----------------------------------------- */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
