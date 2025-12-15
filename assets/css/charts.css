@@ -1,10 +1,10 @@
 /* =========================================
-   Charts Styling
-   ========================================= */
+   Charts Styling (Corrected & Enhanced)
+========================================= */
 
 /* -----------------------------------------
    Chart Container
-   ----------------------------------------- */
+----------------------------------------- */
 .chart-container {
   width: 100%;
   min-height: 320px;
@@ -13,7 +13,7 @@
 
 /* -----------------------------------------
    SVG Charts
-   ----------------------------------------- */
+----------------------------------------- */
 .chart-svg {
   width: 100%;
   height: 100%;
@@ -22,69 +22,92 @@
 
 /* -----------------------------------------
    Axes
-   ----------------------------------------- */
+----------------------------------------- */
 .axis path,
 .axis line {
-  stroke: var(--color-gray-300);
+  stroke: #e5e7eb;
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
 
 .axis text {
-  fill: var(--color-gray-600);
-  font-size: var(--font-size-xs);
+  fill: #6b7280;
+  font-size: 12px;
 }
 
 /* -----------------------------------------
    Data Labels
-   ----------------------------------------- */
+----------------------------------------- */
 .chart-label {
-  font-size: var(--font-size-xs);
-  fill: var(--color-gray-700);
+  font-size: 12px;
+  fill: #374151;
 }
 
 /* -----------------------------------------
-   Legends
-   ----------------------------------------- */
+   Legends (FIXED)
+----------------------------------------- */
 .chart-legend {
   display: flex;
-  gap: var(--space-4);
-  margin-top: var(--space-4);
+  gap: 12px;
+  margin-top: 14px;
   flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-xs);
-  color: var(--color-gray-600);
+  gap: 8px;
+  font-size: 12px;
+  color: #374151;
 }
 
 .legend-swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
 }
 
 /* -----------------------------------------
-   Bars, Lines, Slices
-   ----------------------------------------- */
+   Bars (MULTI-COLOR SUPPORT)
+----------------------------------------- */
 .chart-bar {
-  fill: var(--color-primary);
+  fill: #4f46e5;
+  transition: opacity 0.2s ease, fill 0.2s ease;
 }
 
+.chart-bar:nth-child(1n) { fill: #4f46e5; }
+.chart-bar:nth-child(2n) { fill: #22c55e; }
+.chart-bar:nth-child(3n) { fill: #f59e0b; }
+.chart-bar:nth-child(4n) { fill: #ef4444; }
+.chart-bar:nth-child(5n) { fill: #06b6d4; }
+
+.chart-bar:hover {
+  opacity: 0.85;
+}
+
+/* -----------------------------------------
+   Lines
+----------------------------------------- */
 .chart-line {
   fill: none;
-  stroke: var(--color-primary);
+  stroke: #4f46e5;
   stroke-width: 2;
 }
 
+/* -----------------------------------------
+   Points
+----------------------------------------- */
 .chart-point {
-  fill: var(--color-primary);
+  fill: #4f46e5;
 }
 
+/* -----------------------------------------
+   Slices
+----------------------------------------- */
 .chart-slice {
-  stroke: var(--color-white);
+  stroke: #ffffff;
   stroke-width: 1;
 }
