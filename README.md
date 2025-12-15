@@ -73,6 +73,42 @@ Link:
 ```
 https://docs.google.com/spreadsheets/d/1Iw1DKurGcWc_LMpTnkVBmDhmx8UWc_-cS404DGuZ3y0/edit?gid=0#gid=0
 ```
+## Screenshots & Demo
+
+### 1. Data Input (CSV / Google Sheets)
+Upload a CSV file or paste a public Google Sheets link to load data instantly.
+
+> _Supports automatic schema detection and multiple data sources._
+
+![Data Input](docs/screenshots/data-input.png)
+
+---
+
+### 2. Natural Language Query
+Ask questions like:
+- `total revenue by region`
+- `average revenue by product`
+- `count by category`
+
+The system automatically interprets intent and selects the best visualization.
+
+![Query Input](docs/screenshots/query-input.png)
+
+---
+
+### 3. Instant Charts & Insights
+Charts are generated instantly along with:
+- A clear explanation of the result
+- Intelligent suggestions to refine analysis
+
+![Analytics Output](docs/screenshots/analytics-output.png)
+
+---
+
+### Optional: Short Demo GIF
+A short walkthrough showing data upload → query → chart rendering.
+
+![Demo GIF](docs/screenshots/demo.gif)
 
 
 2. Make the sheet **Public (Viewer access)**  
