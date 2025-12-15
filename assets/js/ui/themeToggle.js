@@ -1,5 +1,5 @@
 /* =========================================
-   Theme Toggle (Light / Dark)
+   Theme Toggle (Light / Dark) – Deno Safe
 ========================================= */
 
 const STORAGE_KEY = "instant-analytics-theme";
@@ -8,31 +8,35 @@ const STORAGE_KEY = "instant-analytics-theme";
  * Apply theme to document
  */
 function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
+  globalThis.document?.documentElement?.setAttribute("data-theme", theme);
 }
 
 /**
  * Get saved theme or system preference
  */
 function getInitialTheme() {
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = globalThis.localStorage?.getItem(STORAGE_KEY);
   if (saved) return saved;
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  const prefersDark =
+    globalThis.matchMedia &&
+    globalThis.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  return prefersDark ? "dark" : "light";
 }
 
 /**
  * Toggle theme
  */
 function toggleTheme() {
-  const current =
-    document.documentElement.getAttribute("data-theme") || "light";
+  const root = globalThis.document?.documentElement;
+  if (!root) return;
 
+  const current = root.getAttribute("data-theme") || "light";
   const next = current === "dark" ? "light" : "dark";
+
   applyTheme(next);
-  localStorage.setItem(STORAGE_KEY, next);
+  globalThis.localStorage?.setItem(STORAGE_KEY, next);
 }
 
 /**
@@ -42,8 +46,8 @@ export function initThemeToggle() {
   const theme = getInitialTheme();
   applyTheme(theme);
 
-  const toggleBtn = document.getElementById("themeToggle");
-  if (!toggleBtn) return;
+  const btn = globalThis.document?.getElementById("themeToggle");
+  if (!btn) return;
 
-  toggleBtn.addEventListener("click", toggleTheme);
+  btn.addEventListener("click", toggleTheme);
 }
